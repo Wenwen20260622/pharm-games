@@ -1,0 +1,142 @@
+<h2 class="sr-only">Nitrostat 用藥安全填空練習，需將正確選項拖曳或點選填入句子中的空格</h2>
+<div id="quiz-root"></div>
+<script>
+(function(){
+  const sentences = [
+    {parts: ["Nitrostat 舌下錠的主要成分是", "GAP", "，常用於預防或緩解心絞痛。"], answer: "硝酸甘油"},
+    {parts: ["當急性胸痛發作時，應將藥錠含於", "GAP", "，不可嚼碎或整粒吞服。"], answer: "舌下"},
+    {parts: ["舌下含藥時建議坐下，以免因血壓下降發生", "GAP", "。"], answer: "暈眩"},
+    {parts: ["若症狀未緩解，可每隔五分鐘重複使用一粒，但總共不超過", "GAP", "。"], answer: "三次"},
+    {parts: ["若在十五分鐘內已使用三粒仍無效，應立即", "GAP", "。"], answer: "就醫"}
+  ];
+  const distractors = ["五次","普拿疼","手心","一次","阿司匹林","發燒","喝水","休息","咳嗽","口腔"];
+
+  let options = [];
+  let filled = {};
+  let checked = false;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function init(){
+    options = shuffle(sentences.map(s=>s.answer).concat(distractors));
+    filled = {};
+    checked = false;
+    render();
+  }
+
+  function selectOption(opt, btn){
+    if(checked) return;
+    if(Object.values(filled).includes(opt)) return;
+    const emptyIdx = sentences.findIndex((s, i) => !filled[i]);
+    if(emptyIdx === -1) return;
+    filled[emptyIdx] = opt;
+    render();
+  }
+
+  function clearBlank(idx){
+    if(checked) return;
+    delete filled[idx];
+    render();
+  }
+
+  function checkAnswers(){
+    checked = true;
+    render();
+  }
+
+  function reset(){
+    init();
+  }
+
+  function render(){
+    const root = document.getElementById('quiz-root');
+    const allFilled = sentences.every((s,i)=>filled[i]);
+    const usedOptions = new Set(Object.values(filled));
+
+    let sentencesHtml = sentences.map((s, i) => {
+      const val = filled[i];
+      let blankStyle = "display:inline-flex; align-items:center; justify-content:center; min-width:90px; height:32px; padding:0 12px; border-radius:var(--border-radius-md); font-size:14px; font-weight:500; cursor:pointer; vertical-align:middle; margin:0 2px;";
+      let blankContent = "";
+      let extraStyle = "";
+
+      if(!val){
+        extraStyle = "border:1px dashed var(--color-border-secondary); background:var(--color-background-secondary); color:var(--color-text-tertiary);";
+        blankContent = "&nbsp;";
+      } else if(!checked){
+        extraStyle = "border:1px solid var(--color-border-info); background:var(--color-background-info); color:var(--color-text-info);";
+        blankContent = val;
+      } else {
+        const isCorrect = val === s.answer;
+        if(isCorrect){
+          extraStyle = "border:1px solid var(--color-border-success); background:var(--color-background-success); color:var(--color-text-success);";
+          blankContent = val + ' <i class="ti ti-check" aria-hidden="true" style="font-size:14px;"></i>';
+        } else {
+          extraStyle = "border:1px solid var(--color-border-danger); background:var(--color-background-danger); color:var(--color-text-danger);";
+          blankContent = val + ' <i class="ti ti-x" aria-hidden="true" style="font-size:14px;"></i>';
+        }
+      }
+
+      const clickAttr = (!checked && val) ? `onclick="window.__quiz.clearBlank(${i})"` : (!checked ? `onclick="window.__quiz.clearBlank(${i})"` : "");
+
+      return `<p style="font-size:16px; line-height:2.4; margin:0 0 4px;">
+        ${s.parts[0]}
+        <span style="${blankStyle}${extraStyle}" ${clickAttr}>${blankContent}</span>
+        ${s.parts[2]}
+      </p>`;
+    }).join("");
+
+    let optionsHtml = options.map(opt => {
+      const used = usedOptions.has(opt);
+      const disabled = used || checked;
+      return `<button
+        onclick="window.__quiz.selectOption('${opt.replace(/'/g,"\\'")}')"
+        ${disabled ? 'disabled' : ''}
+        style="opacity:${used ? 0.35 : 1}; cursor:${disabled ? 'default' : 'pointer'};"
+      >${opt}</button>`;
+    }).join("");
+
+    let footer = "";
+    if(checked){
+      const allCorrect = sentences.every((s,i)=>filled[i]===s.answer);
+      if(allCorrect){
+        footer = `<div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:1.5rem; padding:12px 16px; background:var(--color-background-success); border-radius:var(--border-radius-lg);">
+          <div style="display:flex; align-items:center; gap:8px; color:var(--color-text-success); font-size:14px; font-weight:500;">
+            <i class="ti ti-check" aria-hidden="true"></i> 所有答案都正確！非常好！
+          </div>
+        </div>`;
+      } else {
+        footer = `<div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:1.5rem; padding:12px 16px; background:var(--color-background-danger); border-radius:var(--border-radius-lg);">
+          <div style="display:flex; align-items:center; gap:8px; color:var(--color-text-danger); font-size:14px; font-weight:500;">
+            <i class="ti ti-x" aria-hidden="true"></i> 有答案不正確，請再試一次
+          </div>
+          <button onclick="window.__quiz.reset()" style="flex-shrink:0;">重新開始</button>
+        </div>`;
+      }
+    } else {
+      footer = `<div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+        <button onclick="window.__quiz.checkAnswers()" ${!allFilled ? 'disabled' : ''} style="${allFilled ? 'background:var(--color-background-info); color:var(--color-text-info); border-color:var(--color-border-info);' : 'opacity:0.4; cursor:default;'}">檢查</button>
+      </div>`;
+    }
+
+    root.innerHTML = `
+      <div>
+        ${sentencesHtml}
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:1.5rem;">
+        ${optionsHtml}
+      </div>
+      ${footer}
+    `;
+  }
+
+  window.__quiz = { selectOption, clearBlank, checkAnswers, reset };
+  init();
+})();
+</script>
