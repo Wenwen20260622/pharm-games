@@ -1,5 +1,203 @@
-<h2 class="sr-only">Nitrostat 用藥安全填空練習，需將正確選項拖曳或點選填入句子中的空格</h2>
-<div id="quiz-root"></div>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nitrostat 用藥安全填空練習</title>
+<style>
+  body {
+    margin: 0;
+    background: #FAF8F4;
+    color: #1F3A33;
+    font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    padding: 32px 20px;
+  }
+
+  .quiz-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .quiz-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 24px;
+    color: #1F3A33;
+    line-height: 1.6;
+  }
+
+  .quiz-card {
+    background: #FFFFFF;
+    border: 1px solid #E7E2D8;
+    border-radius: 16px;
+    padding: 28px 28px 24px;
+  }
+
+  .sentence {
+    font-size: 16px;
+    line-height: 2.6;
+    margin: 0 0 6px;
+    color: #1F3A33;
+  }
+
+  .blank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 0 4px;
+    transition: background 0.15s ease;
+  }
+
+  .blank-empty {
+    border: 1.5px dashed #C9C2B4;
+    background: #FAF8F4;
+    color: #A8A096;
+  }
+
+  .blank-filled {
+    border: 1.5px solid #5C8AA6;
+    background: #EAF1F5;
+    color: #2D5670;
+  }
+
+  .blank-correct {
+    border: 1.5px solid #5B8C6B;
+    background: #EBF4EC;
+    color: #3A6B47;
+  }
+
+  .blank-wrong {
+    border: 1.5px solid #D97B4F;
+    background: #FBEAE1;
+    color: #B8542A;
+  }
+
+  .options-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #E7E2D8;
+  }
+
+  .option-btn {
+    font-family: inherit;
+    border: 1px solid #E7E2D8;
+    background: #FFFFFF;
+    color: #1F3A33;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.1s ease;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: #D97B4F;
+    transform: translateY(-1px);
+  }
+
+  .option-btn:disabled {
+    cursor: default;
+  }
+
+  .footer-row {
+    margin-top: 24px;
+  }
+
+  .check-btn {
+    font-family: inherit;
+    display: block;
+    margin-left: auto;
+    border: 1px solid #1F3A33;
+    background: #1F3A33;
+    color: #fff;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .check-btn:hover:not(:disabled) {
+    background: #D97B4F;
+    border-color: #D97B4F;
+  }
+
+  .check-btn:disabled {
+    background: #C9C2B4;
+    border-color: #C9C2B4;
+    cursor: default;
+  }
+
+  .result-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .result-success {
+    background: #EBF4EC;
+    color: #3A6B47;
+  }
+
+  .result-danger {
+    background: #FBEAE1;
+    color: #B8542A;
+  }
+
+  .retry-btn {
+    font-family: inherit;
+    flex-shrink: 0;
+    border: 1px solid #D97B4F;
+    background: #fff;
+    color: #D97B4F;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .retry-btn:hover {
+    background: #D97B4F;
+    color: #fff;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+  }
+</style>
+</head>
+<body>
+
+<div class="quiz-wrap">
+  <h2 class="sr-only">Nitrostat 用藥安全填空練習，需將正確選項拖曳或點選填入句子中的空格</h2>
+  <div class="quiz-card">
+    <div id="quiz-root"></div>
+  </div>
+</div>
+
 <script>
 (function(){
   const sentences = [
@@ -31,7 +229,7 @@
     render();
   }
 
-  function selectOption(opt, btn){
+  function selectOption(opt){
     if(checked) return;
     if(Object.values(filled).includes(opt)) return;
     const emptyIdx = sentences.findIndex((s, i) => !filled[i]);
@@ -62,32 +260,25 @@
 
     let sentencesHtml = sentences.map((s, i) => {
       const val = filled[i];
-      let blankStyle = "display:inline-flex; align-items:center; justify-content:center; min-width:90px; height:32px; padding:0 12px; border-radius:var(--border-radius-md); font-size:14px; font-weight:500; cursor:pointer; vertical-align:middle; margin:0 2px;";
-      let blankContent = "";
-      let extraStyle = "";
+      let cls = "blank ";
+      let content = "&nbsp;";
 
       if(!val){
-        extraStyle = "border:1px dashed var(--color-border-secondary); background:var(--color-background-secondary); color:var(--color-text-tertiary);";
-        blankContent = "&nbsp;";
+        cls += "blank-empty";
       } else if(!checked){
-        extraStyle = "border:1px solid var(--color-border-info); background:var(--color-background-info); color:var(--color-text-info);";
-        blankContent = val;
+        cls += "blank-filled";
+        content = val;
       } else {
         const isCorrect = val === s.answer;
-        if(isCorrect){
-          extraStyle = "border:1px solid var(--color-border-success); background:var(--color-background-success); color:var(--color-text-success);";
-          blankContent = val + ' <i class="ti ti-check" aria-hidden="true" style="font-size:14px;"></i>';
-        } else {
-          extraStyle = "border:1px solid var(--color-border-danger); background:var(--color-background-danger); color:var(--color-text-danger);";
-          blankContent = val + ' <i class="ti ti-x" aria-hidden="true" style="font-size:14px;"></i>';
-        }
+        cls += isCorrect ? "blank-correct" : "blank-wrong";
+        content = val + (isCorrect ? " ✓" : " ✗");
       }
 
-      const clickAttr = (!checked && val) ? `onclick="window.__quiz.clearBlank(${i})"` : (!checked ? `onclick="window.__quiz.clearBlank(${i})"` : "");
+      const clickAttr = !checked ? `onclick="window.__quiz.clearBlank(${i})"` : "";
 
-      return `<p style="font-size:16px; line-height:2.4; margin:0 0 4px;">
+      return `<p class="sentence">
         ${s.parts[0]}
-        <span style="${blankStyle}${extraStyle}" ${clickAttr}>${blankContent}</span>
+        <span class="${cls}" ${clickAttr}>${content}</span>
         ${s.parts[2]}
       </p>`;
     }).join("");
@@ -96,9 +287,10 @@
       const used = usedOptions.has(opt);
       const disabled = used || checked;
       return `<button
+        class="option-btn"
         onclick="window.__quiz.selectOption('${opt.replace(/'/g,"\\'")}')"
         ${disabled ? 'disabled' : ''}
-        style="opacity:${used ? 0.35 : 1}; cursor:${disabled ? 'default' : 'pointer'};"
+        style="opacity:${used ? 0.35 : 1};"
       >${opt}</button>`;
     }).join("");
 
@@ -106,33 +298,23 @@
     if(checked){
       const allCorrect = sentences.every((s,i)=>filled[i]===s.answer);
       if(allCorrect){
-        footer = `<div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:1.5rem; padding:12px 16px; background:var(--color-background-success); border-radius:var(--border-radius-lg);">
-          <div style="display:flex; align-items:center; gap:8px; color:var(--color-text-success); font-size:14px; font-weight:500;">
-            <i class="ti ti-check" aria-hidden="true"></i> 所有答案都正確！非常好！
-          </div>
+        footer = `<div class="result-banner result-success">
+          <span>✓ 所有答案都正確！非常好！</span>
         </div>`;
       } else {
-        footer = `<div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:1.5rem; padding:12px 16px; background:var(--color-background-danger); border-radius:var(--border-radius-lg);">
-          <div style="display:flex; align-items:center; gap:8px; color:var(--color-text-danger); font-size:14px; font-weight:500;">
-            <i class="ti ti-x" aria-hidden="true"></i> 有答案不正確，請再試一次
-          </div>
-          <button onclick="window.__quiz.reset()" style="flex-shrink:0;">重新開始</button>
+        footer = `<div class="result-banner result-danger">
+          <span>✗ 有答案不正確，請再試一次</span>
+          <button class="retry-btn" onclick="window.__quiz.reset()">重新開始</button>
         </div>`;
       }
     } else {
-      footer = `<div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
-        <button onclick="window.__quiz.checkAnswers()" ${!allFilled ? 'disabled' : ''} style="${allFilled ? 'background:var(--color-background-info); color:var(--color-text-info); border-color:var(--color-border-info);' : 'opacity:0.4; cursor:default;'}">檢查</button>
-      </div>`;
+      footer = `<button class="check-btn" onclick="window.__quiz.checkAnswers()" ${!allFilled ? 'disabled' : ''}>檢查</button>`;
     }
 
     root.innerHTML = `
-      <div>
-        ${sentencesHtml}
-      </div>
-      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:1.5rem;">
-        ${optionsHtml}
-      </div>
-      ${footer}
+      <div>${sentencesHtml}</div>
+      <div class="options-row">${optionsHtml}</div>
+      <div class="footer-row">${footer}</div>
     `;
   }
 
@@ -140,3 +322,6 @@
   init();
 })();
 </script>
+
+</body>
+</html>
