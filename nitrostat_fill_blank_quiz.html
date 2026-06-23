@@ -228,23 +228,30 @@
   const pages = [
     {
       title: "Nitrostat 功能與正確使用方式",
-      sentences: [
-        {parts: ["Nitrostat 舌下錠的主要成分是", "GAP", "，常用於預防或緩解心絞痛。"], answer: "硝酸甘油"},
-        {parts: ["當急性胸痛發作時，應將藥錠含於", "GAP", "，不可嚼碎或整粒吞服。"], answer: "舌下"},
-        {parts: ["舌下含藥時建議坐下，以免因血壓下降發生", "GAP", "。"], answer: "暈眩"},
-        {parts: ["若症狀未緩解，可每隔五分鐘重複使用一粒，但總共不超過", "GAP", "。"], answer: "三次"},
-        {parts: ["若在十五分鐘內已使用三粒仍無效，應立即", "GAP", "。"], answer: "就醫"}
+      groups: [
+        {segments: ["Nitrostat 舌下錠的主要成分是", "GAP", "，常用於預防或緩解心絞痛。"], answers: ["硝酸甘油"]},
+        {segments: ["當急性胸痛發作時，應將藥錠含於", "GAP", "，不可嚼碎或整粒吞服。"], answers: ["舌下"]},
+        {segments: ["舌下含藥時建議坐下，以免因血壓下降發生", "GAP", "。"], answers: ["暈眩"]},
+        {segments: ["若症狀未緩解，可每隔五分鐘重複使用一粒，但總共不超過", "GAP", "。"], answers: ["三次"]},
+        {segments: ["若在十五分鐘內已使用三粒仍無效，應立即", "GAP", "。"], answers: ["就醫"]}
       ],
       distractors: ["五次","普拿疼","手心","一次","阿司匹林","發燒","喝水","休息","咳嗽","口腔"]
     },
     {
       title: "Nitrostat 保存與服用注意事項",
-      sentences: [
-        {parts: ["此藥品需存放於原玻璃容器並將瓶蓋", "GAP", "，避免受潮或受塑膠成分影響。儲存時應選擇陰涼乾燥處，並避免直接"], answer: "拴緊"},
-        {parts: ["", "GAP", "。服用後可能會出現輕微頭痛或暈眩，做危險性工作如開車時需特別"], answer: "照光"},
-        {parts: ["", "GAP", "。若出現過敏反應、視力模糊等不良症狀，應儘快告知"], answer: "小心"},
-        {parts: ["", "GAP", "。"], answer: "醫師"},
-        {parts: ["Nitrostat 舌下錠不可與威而鋼、犀利士等藥品", "GAP", "。"], answer: "併用"}
+      groups: [
+        {
+          segments: ["此藥品需存放於原玻璃容器並將瓶蓋", "GAP", "，避免受潮或受塑膠成分影響。儲存時應選擇陰涼乾燥處，並避免直接", "GAP", "。"],
+          answers: ["拴緊", "照光"]
+        },
+        {
+          segments: ["服用後可能會出現輕微頭痛或暈眩，做危險性工作如開車時需特別", "GAP", "。若出現過敏反應、視力模糊等不良症狀，應儘快告知", "GAP", "。"],
+          answers: ["小心", "醫師"]
+        },
+        {
+          segments: ["Nitrostat 舌下錠不可與威而鋼、犀利士等藥品", "GAP", "。"],
+          answers: ["併用"]
+        }
       ],
       distractors: ["分開","放鬆","加熱","搖晃","朋友","打開","鬆脫","隨意","家人","混合"]
     }
@@ -266,17 +273,30 @@
 
   function initPage(){
     const page = pages[pageIndex];
-    options = shuffle(page.sentences.map(s=>s.answer).concat(page.distractors));
+    const flatBlanks = getFlatBlanks(page);
+    options = shuffle(flatBlanks.map(b=>b.answer).concat(page.distractors));
     filled = {};
     checked = false;
     render();
   }
 
+  function getFlatBlanks(page){
+    // 把所有 group 裡的答案展平成一個全域列表，每個空格記錄所屬 group
+    const flat = [];
+    page.groups.forEach((g, gi) => {
+      g.answers.forEach((ans, ai) => {
+        flat.push({ groupIndex: gi, answerIndexInGroup: ai, answer: ans });
+      });
+    });
+    return flat;
+  }
+
   function selectOption(opt){
     if(checked) return;
     const page = pages[pageIndex];
+    const flatBlanks = getFlatBlanks(page);
     if(Object.values(filled).includes(opt)) return;
-    const emptyIdx = page.sentences.findIndex((s, i) => !filled[i]);
+    const emptyIdx = flatBlanks.findIndex((b, i) => !filled[i]);
     if(emptyIdx === -1) return;
     filled[emptyIdx] = opt;
     render();
@@ -319,32 +339,42 @@
   function render(){
     const root = document.getElementById('quiz-root');
     const page = pages[pageIndex];
-    const allFilled = page.sentences.every((s,i)=>filled[i]);
+    const flatBlanks = getFlatBlanks(page);
+    const allFilled = flatBlanks.every((b,i)=>filled[i]);
     const usedOptions = new Set(Object.values(filled));
 
-    let sentencesHtml = page.sentences.map((s, i) => {
-      const val = filled[i];
-      let cls = "blank ";
-      let content = "&nbsp;";
+    let blankGlobalIndex = 0;
 
-      if(!val){
-        cls += "blank-empty";
-      } else if(!checked){
-        cls += "blank-filled";
-        content = val;
-      } else {
-        const isCorrect = val === s.answer;
-        cls += isCorrect ? "blank-correct" : "blank-wrong";
-        content = val + (isCorrect ? " ✓" : " ✗");
-      }
+    let groupsHtml = page.groups.map((g) => {
+      let html = `<p class="sentence">`;
+      g.segments.forEach(seg => {
+        if(seg === "GAP"){
+          const i = blankGlobalIndex;
+          const blankInfo = flatBlanks[i];
+          const val = filled[i];
+          let cls = "blank ";
+          let content = "&nbsp;";
 
-      const clickAttr = !checked ? `onclick="window.__quiz.clearBlank(${i})"` : "";
+          if(!val){
+            cls += "blank-empty";
+          } else if(!checked){
+            cls += "blank-filled";
+            content = val;
+          } else {
+            const isCorrect = val === blankInfo.answer;
+            cls += isCorrect ? "blank-correct" : "blank-wrong";
+            content = val + (isCorrect ? " ✓" : " ✗");
+          }
 
-      return `<p class="sentence">
-        ${s.parts[0]}
-        <span class="${cls}" ${clickAttr}>${content}</span>
-        ${s.parts[2]}
-      </p>`;
+          const clickAttr = !checked ? `onclick="window.__quiz.clearBlank(${i})"` : "";
+          html += `<span class="${cls}" ${clickAttr}>${content}</span>`;
+          blankGlobalIndex++;
+        } else {
+          html += seg;
+        }
+      });
+      html += `</p>`;
+      return html;
     }).join("");
 
     let optionsHtml = options.map(opt => {
@@ -360,7 +390,7 @@
 
     let footer = "";
     if(checked){
-      const allCorrect = page.sentences.every((s,i)=>filled[i]===s.answer);
+      const allCorrect = flatBlanks.every((b,i)=>filled[i]===b.answer);
       if(allCorrect){
         const isLastPage = pageIndex === pages.length - 1;
         footer = `<div class="result-banner result-success">
@@ -380,7 +410,7 @@
     root.innerHTML = `
       <h2 class="page-title">${page.title}</h2>
       <p class="progress">第 ${pageIndex + 1} / ${pages.length} 頁</p>
-      <div>${sentencesHtml}</div>
+      <div>${groupsHtml}</div>
       <div class="options-row">${optionsHtml}</div>
       <div class="footer-row">${footer}</div>
     `;
