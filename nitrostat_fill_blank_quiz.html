@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nitrostat 用藥安全填空練習</title>
+<title>Nitrostat 用藥安全練習</title>
 <style>
   body {
     margin: 0;
@@ -18,12 +18,21 @@
     margin: 0 auto;
   }
 
-  .quiz-title {
-    font-size: 20px;
+  .page-title {
+    font-size: 22px;
     font-weight: 700;
-    margin: 0 0 24px;
+    margin: 0 0 20px;
     color: #1F3A33;
     line-height: 1.6;
+    text-align: center;
+  }
+
+  .progress {
+    font-size: 13px;
+    color: #5C6B66;
+    margin: 0 0 16px;
+    font-weight: 500;
+    text-align: center;
   }
 
   .quiz-card {
@@ -180,6 +189,23 @@
     color: #fff;
   }
 
+  .finish-banner {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .finish-banner .big {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1F3A33;
+    margin-bottom: 8px;
+  }
+
+  .finish-banner .small {
+    font-size: 14px;
+    color: #5C6B66;
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;
@@ -192,7 +218,6 @@
 <body>
 
 <div class="quiz-wrap">
-  <h2 class="sr-only">Nitrostat 用藥安全填空練習，需將正確選項拖曳或點選填入句子中的空格</h2>
   <div class="quiz-card">
     <div id="quiz-root"></div>
   </div>
@@ -200,15 +225,32 @@
 
 <script>
 (function(){
-  const sentences = [
-    {parts: ["Nitrostat 舌下錠的主要成分是", "GAP", "，常用於預防或緩解心絞痛。"], answer: "硝酸甘油"},
-    {parts: ["當急性胸痛發作時，應將藥錠含於", "GAP", "，不可嚼碎或整粒吞服。"], answer: "舌下"},
-    {parts: ["舌下含藥時建議坐下，以免因血壓下降發生", "GAP", "。"], answer: "暈眩"},
-    {parts: ["若症狀未緩解，可每隔五分鐘重複使用一粒，但總共不超過", "GAP", "。"], answer: "三次"},
-    {parts: ["若在十五分鐘內已使用三粒仍無效，應立即", "GAP", "。"], answer: "就醫"}
+  const pages = [
+    {
+      title: "Nitrostat 功能與正確使用方式",
+      sentences: [
+        {parts: ["Nitrostat 舌下錠的主要成分是", "GAP", "，常用於預防或緩解心絞痛。"], answer: "硝酸甘油"},
+        {parts: ["當急性胸痛發作時，應將藥錠含於", "GAP", "，不可嚼碎或整粒吞服。"], answer: "舌下"},
+        {parts: ["舌下含藥時建議坐下，以免因血壓下降發生", "GAP", "。"], answer: "暈眩"},
+        {parts: ["若症狀未緩解，可每隔五分鐘重複使用一粒，但總共不超過", "GAP", "。"], answer: "三次"},
+        {parts: ["若在十五分鐘內已使用三粒仍無效，應立即", "GAP", "。"], answer: "就醫"}
+      ],
+      distractors: ["五次","普拿疼","手心","一次","阿司匹林","發燒","喝水","休息","咳嗽","口腔"]
+    },
+    {
+      title: "Nitrostat 保存與服用注意事項",
+      sentences: [
+        {parts: ["此藥品需存放於原玻璃容器並將瓶蓋", "GAP", "，避免受潮或受塑膠成分影響。儲存時應選擇陰涼乾燥處，並避免直接"], answer: "拴緊"},
+        {parts: ["", "GAP", "。服用後可能會出現輕微頭痛或暈眩，做危險性工作如開車時需特別"], answer: "照光"},
+        {parts: ["", "GAP", "。若出現過敏反應、視力模糊等不良症狀，應儘快告知"], answer: "小心"},
+        {parts: ["", "GAP", "。"], answer: "醫師"},
+        {parts: ["Nitrostat 舌下錠不可與威而鋼、犀利士等藥品", "GAP", "。"], answer: "併用"}
+      ],
+      distractors: ["分開","放鬆","加熱","搖晃","朋友","打開","鬆脫","隨意","家人","混合"]
+    }
   ];
-  const distractors = ["五次","普拿疼","手心","一次","阿司匹林","發燒","喝水","休息","咳嗽","口腔"];
 
+  let pageIndex = 0;
   let options = [];
   let filled = {};
   let checked = false;
@@ -222,8 +264,9 @@
     return a;
   }
 
-  function init(){
-    options = shuffle(sentences.map(s=>s.answer).concat(distractors));
+  function initPage(){
+    const page = pages[pageIndex];
+    options = shuffle(page.sentences.map(s=>s.answer).concat(page.distractors));
     filled = {};
     checked = false;
     render();
@@ -231,8 +274,9 @@
 
   function selectOption(opt){
     if(checked) return;
+    const page = pages[pageIndex];
     if(Object.values(filled).includes(opt)) return;
-    const emptyIdx = sentences.findIndex((s, i) => !filled[i]);
+    const emptyIdx = page.sentences.findIndex((s, i) => !filled[i]);
     if(emptyIdx === -1) return;
     filled[emptyIdx] = opt;
     render();
@@ -249,16 +293,36 @@
     render();
   }
 
-  function reset(){
-    init();
+  function retryPage(){
+    initPage();
+  }
+
+  function nextPage(){
+    if(pageIndex < pages.length - 1){
+      pageIndex++;
+      initPage();
+    } else {
+      renderFinish();
+    }
+  }
+
+  function renderFinish(){
+    const root = document.getElementById('quiz-root');
+    root.innerHTML = `
+      <div class="finish-banner">
+        <div class="big">✓ 全部練習完成！</div>
+        <div class="small">您已完成 Nitrostat 用藥安全相關練習。</div>
+      </div>
+    `;
   }
 
   function render(){
     const root = document.getElementById('quiz-root');
-    const allFilled = sentences.every((s,i)=>filled[i]);
+    const page = pages[pageIndex];
+    const allFilled = page.sentences.every((s,i)=>filled[i]);
     const usedOptions = new Set(Object.values(filled));
 
-    let sentencesHtml = sentences.map((s, i) => {
+    let sentencesHtml = page.sentences.map((s, i) => {
       const val = filled[i];
       let cls = "blank ";
       let content = "&nbsp;";
@@ -296,15 +360,17 @@
 
     let footer = "";
     if(checked){
-      const allCorrect = sentences.every((s,i)=>filled[i]===s.answer);
+      const allCorrect = page.sentences.every((s,i)=>filled[i]===s.answer);
       if(allCorrect){
+        const isLastPage = pageIndex === pages.length - 1;
         footer = `<div class="result-banner result-success">
           <span>✓ 所有答案都正確！非常好！</span>
+          <button class="retry-btn" onclick="window.__quiz.nextPage()">${isLastPage ? '完成' : '下一頁'}</button>
         </div>`;
       } else {
         footer = `<div class="result-banner result-danger">
           <span>✗ 有答案不正確，請再試一次</span>
-          <button class="retry-btn" onclick="window.__quiz.reset()">重新開始</button>
+          <button class="retry-btn" onclick="window.__quiz.retryPage()">重新作答</button>
         </div>`;
       }
     } else {
@@ -312,14 +378,16 @@
     }
 
     root.innerHTML = `
+      <h2 class="page-title">${page.title}</h2>
+      <p class="progress">第 ${pageIndex + 1} / ${pages.length} 頁</p>
       <div>${sentencesHtml}</div>
       <div class="options-row">${optionsHtml}</div>
       <div class="footer-row">${footer}</div>
     `;
   }
 
-  window.__quiz = { selectOption, clearBlank, checkAnswers, reset };
-  init();
+  window.__quiz = { selectOption, clearBlank, checkAnswers, retryPage, nextPage };
+  initPage();
 })();
 </script>
 
