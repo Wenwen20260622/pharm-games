@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0014)about:internet -->
+<html lang="zh-Hant"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nitrostat 用藥安全練習</title>
 <style>
@@ -30,9 +30,25 @@
   .progress {
     font-size: 13px;
     color: #5C6B66;
+    margin: 0 0 4px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .timer {
+    font-size: 13px;
+    color: #5C6B66;
     margin: 0 0 16px;
     font-weight: 500;
     text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .timer-final {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1F3A33;
+    margin: 4px 0 0;
   }
 
   .quiz-card {
@@ -235,7 +251,14 @@
 
 <div class="quiz-wrap">
   <div class="quiz-card">
-    <div id="quiz-root"></div>
+    <div id="quiz-root">
+      <h2 class="page-title">Nitrostat 功能與正確使用方式</h2>
+      <p class="progress">第 1 / 2 頁</p>
+      <p class="timer" id="quiz-timer">已花費時間：00:00</p>
+      <div><p class="sentence">Nitrostat 舌下錠的主要成分是<span class="blank blank-empty" onclick="window.__quiz.clearBlank(0)">&nbsp;</span>，常用於預防或緩解心絞痛。</p><p class="sentence">當急性胸痛發作時，應將藥錠含於<span class="blank blank-empty" onclick="window.__quiz.clearBlank(1)">&nbsp;</span>，不可嚼碎或整粒吞服。</p><p class="sentence">舌下含藥時建議坐下，以免因血壓下降發生<span class="blank blank-empty" onclick="window.__quiz.clearBlank(2)">&nbsp;</span>。</p><p class="sentence">若症狀未緩解，可每隔五分鐘重複使用一粒，但總共不超過<span class="blank blank-empty" onclick="window.__quiz.clearBlank(3)">&nbsp;</span>。</p><p class="sentence">若在十五分鐘內已使用三粒仍無效，應立即<span class="blank blank-empty" onclick="window.__quiz.clearBlank(4)">&nbsp;</span>。</p></div>
+      <div class="options-row"><button class="option-btn" onclick="window.__quiz.selectOption(&#39;三次&#39;)" style="opacity:1;">三次</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;就醫&#39;)" style="opacity:1;">就醫</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;舌下&#39;)" style="opacity:1;">舌下</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;口腔&#39;)" style="opacity:1;">口腔</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;阿司匹林&#39;)" style="opacity:1;">阿司匹林</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;喝水&#39;)" style="opacity:1;">喝水</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;硝酸甘油&#39;)" style="opacity:1;">硝酸甘油</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;五次&#39;)" style="opacity:1;">五次</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;暈眩&#39;)" style="opacity:1;">暈眩</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;發燒&#39;)" style="opacity:1;">發燒</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;手心&#39;)" style="opacity:1;">手心</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;一次&#39;)" style="opacity:1;">一次</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;休息&#39;)" style="opacity:1;">休息</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;咳嗽&#39;)" style="opacity:1;">咳嗽</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;普拿疼&#39;)" style="opacity:1;">普拿疼</button></div>
+      <div class="footer-row"><button class="check-btn" onclick="window.__quiz.checkAnswers()" disabled="">檢查</button></div>
+    </div>
   </div>
 </div>
 
@@ -277,6 +300,8 @@
   let options = [];
   let filled = {};
   let checked = false;
+  let elapsedSeconds = 0;
+  let timerInterval = null;
 
   function shuffle(arr){
     const a = arr.slice();
@@ -287,6 +312,28 @@
     return a;
   }
 
+  function formatTime(totalSeconds){
+    const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const s = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function startTimer(){
+    if(timerInterval) return; // 已經在跑了，不重複啟動
+    timerInterval = setInterval(() => {
+      elapsedSeconds++;
+      const el = document.getElementById('quiz-timer');
+      if(el) el.textContent = `已花費時間：${formatTime(elapsedSeconds)}`;
+    }, 1000);
+  }
+
+  function stopTimer(){
+    if(timerInterval){
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
   function initPage(){
     const page = pages[pageIndex];
     const flatBlanks = getFlatBlanks(page);
@@ -294,6 +341,7 @@
     filled = {};
     checked = false;
     render();
+    startTimer();
   }
 
   function getFlatBlanks(page){
@@ -343,11 +391,13 @@
   }
 
   function renderFinish(){
+    stopTimer();
     const root = document.getElementById('quiz-root');
     root.innerHTML = `
       <div class="finish-banner">
         <div class="big">✓ 全部練習完成！</div>
         <div class="small">您已完成 Nitrostat 用藥安全相關練習。</div>
+        <div class="timer-final">總耗時：${formatTime(elapsedSeconds)}</div>
         <a class="back-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning">回藥劑部學習平台</a>
       </div>
     `;
@@ -427,6 +477,7 @@
     root.innerHTML = `
       <h2 class="page-title">${page.title}</h2>
       <p class="progress">第 ${pageIndex + 1} / ${pages.length} 頁</p>
+      <p class="timer" id="quiz-timer">已花費時間：${formatTime(elapsedSeconds)}</p>
       <div>${groupsHtml}</div>
       <div class="options-row">${optionsHtml}</div>
       <div class="footer-row">${footer}</div>
@@ -438,5 +489,6 @@
 })();
 </script>
 
-</body>
-</html>
+
+
+</body></html>
