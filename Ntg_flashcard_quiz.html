@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0014)about:internet -->
+<html lang="zh-Hant"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nitrostat 耐絞寧舌下錠重點知識</title>
 <style>
@@ -33,6 +33,30 @@
     margin: 0 0 20px;
     font-weight: 500;
     text-align: center;
+  }
+
+  .timer-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+
+  .timer-badge {
+    font-size: 14px;
+    font-weight: 700;
+    color: #5C6B66;
+    background: #FAF8F4;
+    border: 1.5px solid #E7E2D8;
+    border-radius: 20px;
+    padding: 4px 16px;
+    min-width: 56px;
+    text-align: center;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .timer-badge.urgent {
+    color: #D97B4F;
+    border-color: #D97B4F;
   }
 
   .quiz-card {
@@ -92,6 +116,25 @@
     background: #FBEAE1;
     color: #B8542A;
     font-weight: 700;
+  }
+
+  .option-btn.timeout {
+    border-color: #B9C0BC;
+    background: #EFEEEA;
+    color: #5C6B66;
+    font-weight: 700;
+  }
+
+  .timeout-banner {
+    margin: 0 0 16px;
+    padding: 10px 16px;
+    background: #EFEEEA;
+    border: 1px solid #B9C0BC;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #5C6B66;
+    text-align: center;
   }
 
   .hint-box {
@@ -163,6 +206,7 @@
 
   .summary-stats .stat.correct .num { color: #5B8C6B; }
   .summary-stats .stat.wrong .num { color: #D97B4F; }
+  .summary-stats .stat.timeout .num { color: #5C6B66; }
 
   .summary-stats .stat .label {
     font-size: 13px;
@@ -302,11 +346,18 @@
     }
   ];
 
-  let queue = [];       // 目前這輪要作答的題目（索引陣列，指向 allQuestions）
+  const TIME_LIMIT = 20; // 每題時限（秒）
+  const URGENT_THRESHOLD = 5; // 剩餘秒數 <= 此值時變橘色提醒
+
+  let queue = [];         // 目前這輪要作答的題目（索引陣列，指向 allQuestions）
   let current = 0;
   let answered = false;
+  let timedOut = false;   // 本題是否因時間到而結束
   let correctCount = 0;
-  let wrongList = [];   // 這輪答錯的題目索引
+  let wrongList = [];     // 這輪答錯的題目索引
+  let timeoutList = [];   // 這輪時間到的題目索引
+  let timerInterval = null;
+  let secondsLeft = TIME_LIMIT;
 
   function shuffle(arr){
     const a = arr.slice();
@@ -321,14 +372,59 @@
     queue = indices;
     current = 0;
     answered = false;
+    timedOut = false;
     correctCount = 0;
     wrongList = [];
+    timeoutList = [];
+    render();
+  }
+
+  function clearTimer(){
+    if(timerInterval){
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function startTimer(){
+    clearTimer();
+    secondsLeft = TIME_LIMIT;
+    timerInterval = setInterval(() => {
+      secondsLeft--;
+      if(secondsLeft <= 0){
+        clearTimer();
+        handleTimeout();
+      } else {
+        updateTimerDisplay();
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay(){
+    const badge = document.getElementById('timer-badge');
+    if(!badge) return;
+    badge.textContent = secondsLeft + ' 秒';
+    if(secondsLeft <= URGENT_THRESHOLD){
+      badge.classList.add('urgent');
+    } else {
+      badge.classList.remove('urgent');
+    }
+  }
+
+  function handleTimeout(){
+    if(answered) return;
+    answered = true;
+    timedOut = true;
+    const qIdx = queue[current];
+    timeoutList.push(qIdx);
     render();
   }
 
   function selectAnswer(optIdx){
     if(answered) return;
     answered = true;
+    timedOut = false;
+    clearTimer();
     const qIdx = queue[current];
     const q = allQuestions[qIdx];
     if(optIdx === q.answerIndex){
@@ -343,14 +439,16 @@
     if(current < queue.length - 1){
       current++;
       answered = false;
+      timedOut = false;
       render();
     } else {
+      clearTimer();
       renderSummary();
     }
   }
 
   function retryWrong(){
-    startRound(shuffle(wrongList));
+    startRound(shuffle([...wrongList, ...timeoutList]));
   }
 
   function restartAll(){
@@ -370,10 +468,11 @@
 
   function renderSummary(){
     const root = document.getElementById('quiz-root');
-    const total = queue.length;
     const wrongCount = wrongList.length;
+    const timeoutCount = timeoutList.length;
+    const reviewCount = wrongCount + timeoutCount;
 
-    if(wrongCount === 0){
+    if(reviewCount === 0){
       renderFinish();
       return;
     }
@@ -388,7 +487,11 @@
           </div>
           <div class="stat wrong">
             <div class="num">${wrongCount}</div>
-            <div class="label">待複習</div>
+            <div class="label">答錯</div>
+          </div>
+          <div class="stat timeout">
+            <div class="num">${timeoutCount}</div>
+            <div class="label">時間到</div>
           </div>
         </div>
         <div class="summary-actions">
@@ -406,24 +509,38 @@
     let optionsHtml = q.options.map((opt, i) => {
       let cls = "option-btn";
       if(answered){
-        if(i === q.answerIndex) cls += " correct";
-        else if(i === selectedIdx) cls += " wrong";
+        if(timedOut){
+          if(i === q.answerIndex) cls += " timeout";
+        } else {
+          if(i === q.answerIndex) cls += " correct";
+          else if(i === selectedIdx) cls += " wrong";
+        }
       }
       const disabled = answered ? 'disabled' : '';
       return `<button class="${cls}" ${disabled} onclick="window.__cards.selectAnswer(${i})">${String.fromCharCode(65+i)}. ${opt}</button>`;
     }).join("");
 
+    let timeoutBannerHtml = (answered && timedOut) ? `<div class="timeout-banner">⏱ 時間到，來不及作答</div>` : "";
+
     let hintHtml = answered ? `<div class="hint-box"><strong>提示：</strong>${q.hint}</div>` : "";
 
     let footerHtml = answered ? `<div class="footer-row"><button class="next-btn" onclick="window.__cards.nextQuestion()">${current < queue.length - 1 ? '下一題' : '完成本輪'}</button></div>` : "";
 
+    let timerHtml = !answered ? `<div class="timer-row"><span class="timer-badge" id="timer-badge">${TIME_LIMIT} 秒</span></div>` : "";
+
     root.innerHTML = `
       <p class="progress">第 ${current + 1} / ${queue.length} 題</p>
+      ${timerHtml}
       <p class="question-text">${q.q}</p>
+      ${timeoutBannerHtml}
       <div class="options-list">${optionsHtml}</div>
       ${hintHtml}
       ${footerHtml}
     `;
+
+    if(!answered){
+      startTimer();
+    }
   }
 
   window.__cards = { selectAnswer, nextQuestion, retryWrong, restartAll };
@@ -431,5 +548,6 @@
 })();
 </script>
 
-</body>
-</html>
+
+
+</body></html>
