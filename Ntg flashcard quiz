@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nitrostat 耐絞寧舌下錠重點知識</title>
+<style>
+  body {
+    margin: 0;
+    background: #FAF8F4;
+    color: #1F3A33;
+    font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    padding: 32px 20px;
+  }
+
+  .quiz-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .page-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    color: #1F3A33;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .progress {
+    font-size: 13px;
+    color: #5C6B66;
+    margin: 0 0 20px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .quiz-card {
+    background: #FFFFFF;
+    border: 1px solid #E7E2D8;
+    border-radius: 16px;
+    padding: 28px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .question-text {
+    font-size: 17px;
+    line-height: 1.8;
+    margin: 0 0 24px;
+    color: #1F3A33;
+    font-weight: 700;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    font-family: inherit;
+    text-align: left;
+    border: 1.5px solid #E7E2D8;
+    background: #FFFFFF;
+    color: #1F3A33;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: #D97B4F;
+  }
+
+  .option-btn:disabled {
+    cursor: default;
+  }
+
+  .option-btn.correct {
+    border-color: #5B8C6B;
+    background: #EBF4EC;
+    color: #3A6B47;
+    font-weight: 700;
+  }
+
+  .option-btn.wrong {
+    border-color: #D97B4F;
+    background: #FBEAE1;
+    color: #B8542A;
+    font-weight: 700;
+  }
+
+  .hint-box {
+    margin-top: 18px;
+    padding: 12px 16px;
+    background: #FAF8F4;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #5C6B66;
+    line-height: 1.7;
+  }
+
+  .hint-box strong {
+    color: #1F3A33;
+  }
+
+  .footer-row {
+    margin-top: auto;
+    padding-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .next-btn {
+    font-family: inherit;
+    border: 1px solid #1F3A33;
+    background: #1F3A33;
+    color: #fff;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .next-btn:hover {
+    background: #D97B4F;
+    border-color: #D97B4F;
+  }
+
+  .summary-banner {
+    text-align: center;
+    padding: 20px 20px 8px;
+  }
+
+  .summary-banner .big {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1F3A33;
+    margin-bottom: 12px;
+  }
+
+  .summary-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .summary-stats .stat {
+    text-align: center;
+  }
+
+  .summary-stats .stat .num {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .summary-stats .stat.correct .num { color: #5B8C6B; }
+  .summary-stats .stat.wrong .num { color: #D97B4F; }
+
+  .summary-stats .stat .label {
+    font-size: 13px;
+    color: #5C6B66;
+    margin-top: 4px;
+  }
+
+  .summary-actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .retry-btn {
+    font-family: inherit;
+    border: 1px solid #D97B4F;
+    background: #D97B4F;
+    color: #fff;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .restart-btn {
+    font-family: inherit;
+    border: 1px solid #E7E2D8;
+    background: #fff;
+    color: #1F3A33;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .finish-banner {
+    text-align: center;
+    padding: 20px 20px 8px;
+  }
+
+  .finish-banner .big {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1F3A33;
+    margin-bottom: 8px;
+  }
+
+  .finish-banner .small {
+    font-size: 14px;
+    color: #5C6B66;
+    margin-bottom: 8px;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #5C8AA6;
+    text-decoration: none;
+    border-bottom: 1px solid #5C8AA6;
+    padding-bottom: 2px;
+  }
+
+  .back-link:hover {
+    color: #D97B4F;
+    border-bottom-color: #D97B4F;
+  }
+</style>
+</head>
+<body>
+
+<div class="quiz-wrap">
+  <div class="quiz-card" id="quiz-card">
+    <div id="quiz-root" style="flex:1; display:flex; flex-direction:column;"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const allQuestions = [
+    {
+      q: "下列哪一項是 Nitrostat 耐絞寧舌下錠的主要成分？",
+      options: ["阿司匹林", "硝酸甘油", "普拿疼", "布洛芬"],
+      answerIndex: 1,
+      hint: "這個成分常用於急救心絞痛，屬於硝酸鹽類藥物。"
+    },
+    {
+      q: "使用 Nitrostat 耐絞寧舌下錠時，應該如何正確服用？",
+      options: ["整粒吞服", "嚼碎後吞服", "含於舌下慢慢溶化吸收", "用水吞下"],
+      answerIndex: 2,
+      hint: "這種服用方式能讓藥物快速進入血液循環。"
+    },
+    {
+      q: "Nitrostat 耐絞寧舌下錠主要用於什麼症狀的預防或緩解？",
+      options: ["頭痛", "胃痛", "心絞痛（胸痛）", "關節痛"],
+      answerIndex: 2,
+      hint: "這種症狀常見於心臟疾病患者，會有胸部壓迫感。"
+    },
+    {
+      q: "Nitrostat 耐絞寧舌下錠每次最多可連續使用幾粒？",
+      options: ["1粒", "2粒", "3粒", "4粒"],
+      answerIndex: 2,
+      hint: "超過這個數量應立即就醫。"
+    },
+    {
+      q: "下列哪一項是 Nitrostat 耐絞寧舌下錠的正確保存方式？",
+      options: ["放在塑膠袋中", "置於原玻璃容器並蓋緊", "放在高溫處", "與其他藥品混合"],
+      answerIndex: 1,
+      hint: "這樣可以避免藥品因受潮或與塑膠反應而失效。"
+    },
+    {
+      q: "服用 Nitrostat 耐絞寧舌下錠後，哪一種情況應立即就醫？",
+      options: ["輕微頭痛", "服用3粒後症狀未改善", "口腔有灼燒感", "短暫暈眩"],
+      answerIndex: 1,
+      hint: "這代表藥效不足，需專業醫療協助。"
+    },
+    {
+      q: "服用 Nitrostat 舌下錠後，可能出現哪些不良反應？",
+      options: ["食慾大增、體重上升", "頭痛、暈眩、口乾或視力模糊", "皮膚變黑、掉髮", "聽力減退"],
+      answerIndex: 1,
+      hint: "這些症狀有時會影響開車或操作機械的安全。"
+    },
+    {
+      q: "使用 Nitrostat 舌下錠時，有哪些特殊用藥指示？",
+      options: ["可與任何藥物併用", "不可與威而鋼等藥物併用，孕婦或授乳婦用藥前需諮詢醫師", "服用後可立即開車", "過量使用無不良影響"],
+      answerIndex: 1,
+      hint: "這些指示有助於避免藥物交互作用或不良反應。"
+    },
+    {
+      q: "若服用第一顆 Nitrostat 舌下錠後症狀未緩解，間隔多久可再服用第二顆？",
+      options: ["1分鐘", "5分鐘", "15分鐘", "30分鐘"],
+      answerIndex: 1,
+      hint: "可重複給藥，但每次須間隔這個時間，且總量不可超過建議上限。"
+    }
+  ];
+
+  let queue = [];       // 目前這輪要作答的題目（索引陣列，指向 allQuestions）
+  let current = 0;
+  let answered = false;
+  let correctCount = 0;
+  let wrongList = [];   // 這輪答錯的題目索引
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function startRound(indices){
+    queue = indices;
+    current = 0;
+    answered = false;
+    correctCount = 0;
+    wrongList = [];
+    render();
+  }
+
+  function selectAnswer(optIdx){
+    if(answered) return;
+    answered = true;
+    const qIdx = queue[current];
+    const q = allQuestions[qIdx];
+    if(optIdx === q.answerIndex){
+      correctCount++;
+    } else {
+      wrongList.push(qIdx);
+    }
+    render(optIdx);
+  }
+
+  function nextQuestion(){
+    if(current < queue.length - 1){
+      current++;
+      answered = false;
+      render();
+    } else {
+      renderSummary();
+    }
+  }
+
+  function retryWrong(){
+    startRound(shuffle(wrongList));
+  }
+
+  function restartAll(){
+    startRound(shuffle(allQuestions.map((_, i) => i)));
+  }
+
+  function renderFinish(){
+    const root = document.getElementById('quiz-root');
+    root.innerHTML = `
+      <div class="finish-banner">
+        <div class="big">✓ 全部熟悉完成！</div>
+        <div class="small">您已掌握 Nitrostat 耐絞寧舌下錠重點知識。</div>
+        <a class="back-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning">回藥劑部學習平台</a>
+      </div>
+    `;
+  }
+
+  function renderSummary(){
+    const root = document.getElementById('quiz-root');
+    const total = queue.length;
+    const wrongCount = wrongList.length;
+
+    if(wrongCount === 0){
+      renderFinish();
+      return;
+    }
+
+    root.innerHTML = `
+      <div class="summary-banner">
+        <div class="big">本輪作答完成</div>
+        <div class="summary-stats">
+          <div class="stat correct">
+            <div class="num">${correctCount}</div>
+            <div class="label">答對</div>
+          </div>
+          <div class="stat wrong">
+            <div class="num">${wrongCount}</div>
+            <div class="label">待複習</div>
+          </div>
+        </div>
+        <div class="summary-actions">
+          <button class="retry-btn" onclick="window.__cards.retryWrong()">針對待複習題目再練習一次</button>
+        </div>
+      </div>
+    `;
+  }
+
+  function render(selectedIdx){
+    const root = document.getElementById('quiz-root');
+    const qIdx = queue[current];
+    const q = allQuestions[qIdx];
+
+    let optionsHtml = q.options.map((opt, i) => {
+      let cls = "option-btn";
+      if(answered){
+        if(i === q.answerIndex) cls += " correct";
+        else if(i === selectedIdx) cls += " wrong";
+      }
+      const disabled = answered ? 'disabled' : '';
+      return `<button class="${cls}" ${disabled} onclick="window.__cards.selectAnswer(${i})">${String.fromCharCode(65+i)}. ${opt}</button>`;
+    }).join("");
+
+    let hintHtml = answered ? `<div class="hint-box"><strong>提示：</strong>${q.hint}</div>` : "";
+
+    let footerHtml = answered ? `<div class="footer-row"><button class="next-btn" onclick="window.__cards.nextQuestion()">${current < queue.length - 1 ? '下一題' : '完成本輪'}</button></div>` : "";
+
+    root.innerHTML = `
+      <p class="progress">第 ${current + 1} / ${queue.length} 題</p>
+      <p class="question-text">${q.q}</p>
+      <div class="options-list">${optionsHtml}</div>
+      ${hintHtml}
+      ${footerHtml}
+    `;
+  }
+
+  window.__cards = { selectAnswer, nextQuestion, retryWrong, restartAll };
+  startRound(shuffle(allQuestions.map((_, i) => i)));
+})();
+</script>
+
+</body>
+</html>
