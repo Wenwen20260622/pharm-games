@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>胰島素注射筆 自我檢核測驗</title>
+<meta name="description" content="胰島素注射筆操作與衛教自我檢核測驗，含 6 道題目與即時回饋。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f5f2ec;
+    --paper-light: #faf8f3;
+    --moss: #2d5f4f;
+    --moss-deep: #1d4438;
+    --moss-light: #4a8073;
+    --amber: #d4823c;
+    --amber-deep: #b66922;
+    --amber-light: #f0c285;
+    --rose: #b33a3a;
+    --gray-line: #d9d4ca;
+    --gray-soft: #ece8df;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .font-serif-tc { font-family: 'Noto Serif TC', serif; }
+  .font-display { font-family: 'Playfair Display', 'Noto Serif TC', serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+  .paper-bg {
+    background-image: radial-gradient(circle at 1px 1px, rgba(45,95,79,0.04) 1px, transparent 0);
+    background-size: 18px 18px;
+  }
+
+  .view { display: none; animation: fadeIn 0.5s ease; }
+  .view.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn-primary {
+    background: var(--moss-deep);
+    color: var(--paper);
+    padding: 14px 32px;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    font-size: 15px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .btn-primary:hover { background: var(--ink); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    padding: 14px 32px;
+    border-radius: 4px;
+    font-weight: 500;
+    border: 1px solid var(--gray-line);
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-ghost:hover { border-color: var(--moss); color: var(--moss-deep); }
+
+  .quiz-option {
+    background: var(--paper-light);
+    border: 1.5px solid var(--gray-line);
+    padding: 18px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .quiz-option:hover:not(.disabled) {
+    border-color: var(--moss);
+    background: #fff;
+    transform: translateX(4px);
+  }
+  .quiz-option.selected { border-color: var(--moss-deep); background: rgba(45,95,79,0.06); }
+  .quiz-option.correct { border-color: var(--moss); background: rgba(45,95,79,0.08); }
+  .quiz-option.wrong { border-color: var(--rose); background: rgba(179,58,58,0.06); opacity: 0.85; }
+  .quiz-option.disabled { cursor: default; }
+  .quiz-option .option-letter {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.5px solid var(--gray-line);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--ink);
+    flex-shrink: 0;
+    font-size: 15px;
+  }
+  .quiz-option.correct .option-letter { background: var(--moss); color: var(--paper); border-color: var(--moss); }
+  .quiz-option.wrong .option-letter { background: var(--rose); color: var(--paper); border-color: var(--rose); }
+
+  .progress-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--gray-line);
+    transition: all 0.3s;
+  }
+  .progress-dot.active { background: var(--moss-deep); transform: scale(1.3); }
+  .progress-dot.done { background: var(--moss-light); }
+
+  .feedback {
+    margin-top: 24px;
+    padding: 20px 24px;
+    border-radius: 4px;
+    border-left: 4px solid;
+    animation: slideUp 0.4s ease;
+  }
+  .feedback.success { background: rgba(45,95,79,0.06); border-color: var(--moss); }
+  .feedback.error { background: rgba(179,58,58,0.05); border-color: var(--rose); }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--moss-deep);
+    letter-spacing: 0.12em;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .return-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 28px;
+    background: var(--paper-light);
+    border: 1.5px solid var(--moss);
+    border-radius: 6px;
+    color: var(--moss-deep);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.25s;
+  }
+  .return-link:hover {
+    background: var(--moss-deep);
+    color: var(--paper);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -8px rgba(29,68,56,0.4);
+  }
+  .return-link svg { transition: transform 0.25s; }
+  .return-link:hover svg { transform: translateX(-2px); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 backdrop-blur" style="background: rgba(245,242,236,0.92); border-bottom: 1px solid var(--gray-line);">
+  <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="#2d5f4f" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="6" fill="#d4823c"/>
+        <line x1="16" y1="2" x2="16" y2="6" stroke="#2d5f4f" stroke-width="1.5"/>
+        <line x1="16" y1="26" x2="16" y2="30" stroke="#2d5f4f" stroke-width="1.5"/>
+      </svg>
+      <div>
+        <div class="font-serif-tc font-bold text-base leading-tight" style="color: var(--ink);">胰島素注射筆</div>
+        <div class="text-xs" style="color: var(--moss-deep); letter-spacing: 0.05em;">自我檢核測驗</div>
+      </div>
+    </div>
+    <a href="https://pha.lib.cmuh.org.tw/p/PHlearning" class="text-sm hidden md:flex items-center gap-2" style="color: #666;" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/></svg>
+      藥劑部學習平台
+    </a>
+  </div>
+</header>
+
+<!-- INTRO -->
+<section class="max-w-3xl mx-auto px-6 py-16 paper-bg view active" id="quiz-intro">
+  <div class="text-center">
+    <div class="eyebrow mb-4">Knowledge Check</div>
+    <h1 class="font-serif-tc font-bold text-4xl md:text-5xl mb-6" style="color: var(--ink);">胰島素注射筆<br/>自我檢核測驗</h1>
+    <p class="text-base md:text-lg leading-relaxed mb-12" style="color: #444; max-width: 480px; margin: 0 auto;">
+      共 <strong>6 道題目</strong>，涵蓋操作步驟、注射部位、低血糖辨識與廢棄處理。每題作答後會立即顯示正確答案與重點複習。
+    </p>
+    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto mb-12">
+      <div class="p-4 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="font-display font-bold text-2xl" style="color: var(--moss-deep);">06</div>
+        <div class="text-xs mt-1" style="color: #666;">道題目</div>
+      </div>
+      <div class="p-4 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="font-display font-bold text-2xl" style="color: var(--moss-deep);">∞</div>
+        <div class="text-xs mt-1" style="color: #666;">可重試</div>
+      </div>
+      <div class="p-4 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="font-display font-bold text-2xl" style="color: var(--moss-deep);">3min</div>
+        <div class="text-xs mt-1" style="color: #666;">預估時間</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">
+      開始挑戰
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- QUIZ BODY -->
+<section class="max-w-3xl mx-auto px-6 py-12 view" id="quiz-body">
+  <div class="flex items-center justify-between mb-3">
+    <div class="text-sm" style="color: #666;">
+      Question <span class="font-display font-bold text-base" style="color: var(--ink);" id="q-current">1</span>
+      <span style="color: #aaa;"> / 6</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="font-mono text-sm" style="color: var(--moss-deep);" id="timer">00:00</div>
+      <div class="flex items-center gap-2" id="progress-dots"></div>
+    </div>
+  </div>
+  <div class="w-full rounded-full h-1" style="background: var(--gray-soft);">
+    <div class="h-1 rounded-full transition-all duration-500" style="background: var(--moss-deep); width: 0%;" id="progress-bar"></div>
+  </div>
+  <div id="quiz-content" class="mt-10"></div>
+</section>
+
+<!-- FINISH -->
+<section class="max-w-3xl mx-auto px-6 py-16 view" id="quiz-finish">
+  <div class="text-center">
+    <div class="mx-auto mb-8" style="width: 110px; height: 110px;">
+      <svg viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="56" fill="#2d5f4f"/>
+        <circle cx="60" cy="60" r="56" stroke="#d4823c" stroke-width="2" stroke-dasharray="4 6"/>
+        <path d="M40 60 L54 74 L82 46" stroke="#f5f2ec" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="eyebrow mb-3" style="color: var(--amber-deep);">Mission Complete</div>
+    <h2 class="font-serif-tc font-bold text-4xl md:text-5xl mb-8" style="color: var(--ink);">恭喜你完成挑戰</h2>
+
+    <!-- Score & Time stats -->
+    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto mb-4">
+      <div class="p-6 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="text-xs mb-2" style="color: #666;">本次得分</div>
+        <div class="font-display font-bold" style="font-size: 44px; color: var(--moss-deep); line-height: 1;">
+          <span id="final-score">0</span><span style="font-size: 20px; color: #aaa;"> / 6</span>
+        </div>
+      </div>
+      <div class="p-6 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="text-xs mb-2" style="color: #666;">總耗時</div>
+        <div class="font-mono font-bold" style="font-size: 36px; color: var(--moss-deep); line-height: 1.2;" id="final-time">00:00</div>
+      </div>
+    </div>
+    <p class="text-sm mb-12" id="score-comment" style="color: #666;"></p>
+
+    <!-- Return link to learning platform -->
+    <div class="mb-10">
+      <a href="https://pha.lib.cmuh.org.tw/p/PHlearning" class="return-link" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        回藥劑部學習平台
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+      </a>
+    </div>
+
+    <div class="flex flex-wrap gap-3 justify-center">
+      <button class="btn-primary" onclick="restartQuiz()">
+        重新挑戰
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<footer class="py-10 mt-12" style="background: var(--paper); border-top: 1px solid var(--gray-line);">
+  <div class="max-w-3xl mx-auto px-6 text-center text-xs" style="color: #888;">
+    本測驗僅供教育訓練，非正式醫療指引。實際操作請依醫囑與藥品仿單為準。
+  </div>
+</footer>
+
+<script>
+const quizData = [
+  {
+    type: 'single',
+    title: '前置作業的執行順序',
+    instruction: '請選出步驟一「準備與檢查」加上針頭安裝的正確執行順序。',
+    chapter: 'Step 1 ~ 2',
+    options: [
+      'A（洗手、蓋上筆套、檢查效期）⇨ B（酒精棉片消毒）⇨ C（針頭垂直旋上）',
+      'A（洗手、轉開筆套、檢查效期）⇨ B（酒精棉片消毒）⇨ C（針頭垂直旋上）',
+      'A（洗手、轉開筆套、檢查效期）⇨ C（針頭平行旋上）⇨ B（酒精棉片消毒）',
+    ],
+    correct: 1,
+    explanation: {
+      title: '正確順序：A ⇨ B ⇨ C',
+      points: [
+        '筆套是「轉開」不是「蓋上」，且要先做完所有準備才能接續消毒。',
+        '針頭必須<strong>垂直</strong>旋上，避免歪斜造成漏液與斷針。',
+        '酒精棉片要消毒筆芯橡皮塞處，所以必須在針頭安裝之前完成。',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '排氣與設定劑量的順序',
+    instruction: '請選出步驟三「排除空氣」加上步驟四「設定劑量」的正確執行順序。',
+    chapter: 'Step 3 ~ 4',
+    options: [
+      'A（針頭朝下，輕彈藥水匣使空氣集中）⇨ C（轉動劑量扭轉至醫囑劑量）⇨ B（設定 10 單位按壓直到一滴藥水）',
+      'A（針頭朝上，輕彈藥水匣使空氣集中）⇨ B（設定 2 單位按壓直到一滴藥水）⇨ C（轉動劑量扭轉至醫囑劑量）',
+      'C（轉動劑量扭轉至仿單劑量）⇨ A（針頭朝上,重敲藥水匣使空氣集中）⇨ B（設定 2 單位按壓直到一滴藥水）',
+      'C（轉動劑量扭轉至仿單劑量）⇨ A（針頭朝下，輕彈藥水匣使空氣集中）⇨ B（設定 20 單位按壓直到一滴藥水）',
+    ],
+    correct: 1,
+    explanation: {
+      title: '正確順序：A ⇨ B ⇨ C',
+      points: [
+        '空氣比液體輕，所以針頭必須<strong>朝上</strong>，空氣才會浮到頂端。',
+        '排氣固定設定為 <strong>2 單位</strong>，並以「輕彈」而非重敲處理。',
+        '排氣完成後才設定醫囑劑量，順序不可顛倒。',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '可注射部位的判斷',
+    instruction: '請選出胰島素注射筆<strong>可</strong>注射的部位組合。',
+    chapter: 'Step 5',
+    options: [
+      '大腿（上半部內側）、腹部（避開肚臍周圍）、手臂（上臂中段外側）、腳掌（腳掌外圍）',
+      '大腿（上半部外側）、胸部（鎖骨下方）、腹部（肚臍中央）、手臂（上臂中段外側）',
+      '大腿（上半部外側）、腹部（避開肚臍周圍）、臀部（臀部外上 1/4 處）、手臂（上臂中段外側）',
+    ],
+    correct: 2,
+    explanation: {
+      title: '正確部位：腹部、大腿外側、手臂外側、臀部外上 1/4',
+      points: [
+        '腹部要<strong>避開肚臍周圍</strong>，不能注射在肚臍中央。',
+        '大腿應選<strong>上半部外側</strong>，內側血管豐富、易造成瘀青與吸收不穩。',
+        '胸部、腳掌都不是合適的皮下注射部位。',
+        '每次注射移動一指寬距離，避免硬塊產生。',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '注射注意事項',
+    instruction: '請選出正確的注射注意事項。',
+    chapter: 'Step 6',
+    options: [
+      '清水擦拭注射部位 ⇨ 90 度垂直下針 ⇨ 注射完至少停留 10 秒才拔針',
+      '開水擦拭注射部位 ⇨ 10 度傾斜下針 ⇨ 注射完至少停留 10 秒才拔針',
+      '清水擦拭注射部位 ⇨ 60 度傾斜下針 ⇨ 注射完至少停留 2 秒才拔針',
+      '酒精棉片消毒注射部位 ⇨ 90 度垂直下針 ⇨ 注射完至少停留 10 秒才拔針',
+    ],
+    correct: 3,
+    explanation: {
+      title: '正確做法：酒精消毒 ⇨ 90 度垂直 ⇨ 停留 10 秒',
+      points: [
+        '<strong>酒精棉片</strong>才有消毒作用，清水與開水無法達到無菌效果。',
+        '皮下注射採 <strong>90 度</strong>垂直下針（過瘦者捏褶皮膚仍可垂直）。',
+        '停留至少 <strong>10 秒</strong>是為確保藥液完全送達，太早拔針藥液會跟著流出。',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '廢棄針頭處理',
+    instruction: '請選出廢棄針頭的<strong>正確</strong>處理方式。',
+    chapter: 'Step 7',
+    options: [
+      '丟入大海中',
+      '丟入塑膠袋 ⇩ 醫療廢棄物回收桶',
+      '埋入土壤中',
+      '丟入不易穿透的收集桶 ⇩ 醫療廢棄物回收桶',
+      '一把火燒掉',
+    ],
+    correct: 3,
+    explanation: {
+      title: '正確：先丟入不易穿透的收集桶，再交由醫療廢棄物回收',
+      points: [
+        '塑膠袋無法承受針頭穿刺，可能刺傷清潔人員或污染環境。',
+        '焚燒、掩埋、丟海都會造成生物危害物質擴散。',
+        '醫療廢棄物有專門回收與處理流程，必須遵循。',
+      ]
+    }
+  },
+  {
+    type: 'multi',
+    title: '低血糖會出現的症狀',
+    instruction: '請選出低血糖會出現的<strong>所有</strong>症狀。（可複選）',
+    chapter: 'Hypoglycemia',
+    options: ['冒冷汗', '顫抖', '頭暈', '飢餓感', '疲倦', '虛弱', '昏迷', '發熱', '飽足感'],
+    correct: [0, 1, 2, 3, 4, 5, 6],
+    explanation: {
+      title: '低血糖典型症狀：冒冷汗、顫抖、頭暈、飢餓感、疲倦、虛弱，嚴重時昏迷',
+      points: [
+        '「發熱」並非低血糖症狀，反而高血糖才可能出現相關感染症狀。',
+        '「飽足感」與飢餓相反，當然不是低血糖的訊號。',
+        '症狀嚴重時可能進展為意識不清、昏迷，需立即就醫處理。',
+      ]
+    }
+  }
+];
+
+let currentQ = 0;
+let answers = [];
+let score = 0;
+let multiSelections = [];
+let startTime = null;
+let timerInterval = null;
+let elapsedSeconds = 0;
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60).toString().padStart(2, '0');
+  const sec = (s % 60).toString().padStart(2, '0');
+  return `${m}:${sec}`;
+}
+
+function startTimer() {
+  startTime = Date.now();
+  elapsedSeconds = 0;
+  timerInterval = setInterval(() => {
+    elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('timer').textContent = formatTime(elapsedSeconds);
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+function startQuiz() {
+  currentQ = 0;
+  answers = [];
+  score = 0;
+  multiSelections = [];
+  showView('quiz-body');
+  renderProgressDots();
+  renderQuestion();
+  startTimer();
+}
+
+function restartQuiz() {
+  showView('quiz-intro');
+}
+
+function renderProgressDots() {
+  const dots = document.getElementById('progress-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < quizData.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'progress-dot';
+    if (i < currentQ) d.classList.add('done');
+    if (i === currentQ) d.classList.add('active');
+    dots.appendChild(d);
+  }
+  document.getElementById('progress-bar').style.width = `${(currentQ / quizData.length) * 100}%`;
+  document.getElementById('q-current').textContent = currentQ + 1;
+}
+
+function renderQuestion() {
+  const q = quizData[currentQ];
+  const isMulti = q.type === 'multi';
+  const c = document.getElementById('quiz-content');
+
+  let html = `
+    <div class="mb-2 eyebrow">${q.chapter}</div>
+    <h2 class="font-serif-tc font-bold text-2xl md:text-3xl mb-3">${q.title}</h2>
+    <p class="text-base mb-8" style="color: #555;">${q.instruction}</p>
+    <div class="space-y-3" id="options-wrap">
+  `;
+
+  q.options.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    html += `
+      <button class="quiz-option" data-idx="${i}" onclick="${isMulti ? `toggleMulti(${i})` : `selectSingle(${i})`}">
+        <div class="option-letter">${letter}</div>
+        <div class="flex-1" style="padding-top: 4px;">${opt}</div>
+      </button>
+    `;
+  });
+
+  html += `</div>`;
+
+  if (isMulti) {
+    html += `
+      <div class="mt-6 flex justify-end">
+        <button class="btn-primary" id="submit-multi" onclick="submitMulti()">提交答案
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    `;
+  }
+
+  html += `<div id="feedback-slot"></div>`;
+  c.innerHTML = html;
+}
+
+function toggleMulti(i) {
+  const btn = document.querySelector(`#options-wrap [data-idx="${i}"]`);
+  if (btn.classList.contains('disabled')) return;
+  const idx = multiSelections.indexOf(i);
+  if (idx >= 0) {
+    multiSelections.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else {
+    multiSelections.push(i);
+    btn.classList.add('selected');
+  }
+}
+
+function submitMulti() {
+  const q = quizData[currentQ];
+  const correctSet = new Set(q.correct);
+  const userSet = new Set(multiSelections);
+
+  document.querySelectorAll('#options-wrap .quiz-option').forEach((btn) => {
+    btn.classList.add('disabled');
+    const i = parseInt(btn.dataset.idx);
+    if (correctSet.has(i) && userSet.has(i)) btn.classList.add('correct');
+    else if (correctSet.has(i) && !userSet.has(i)) btn.classList.add('correct');
+    else if (!correctSet.has(i) && userSet.has(i)) btn.classList.add('wrong');
+  });
+
+  document.getElementById('submit-multi').remove();
+
+  const isPerfect = correctSet.size === userSet.size && [...correctSet].every(x => userSet.has(x));
+  answers.push(isPerfect);
+  if (isPerfect) score++;
+  multiSelections = [];
+
+  showFeedback(isPerfect);
+}
+
+function selectSingle(i) {
+  const q = quizData[currentQ];
+  const isCorrect = i === q.correct;
+  answers.push(isCorrect);
+  if (isCorrect) score++;
+
+  document.querySelectorAll('#options-wrap .quiz-option').forEach((btn) => {
+    btn.classList.add('disabled');
+    const idx = parseInt(btn.dataset.idx);
+    if (idx === q.correct) btn.classList.add('correct');
+    if (idx === i && i !== q.correct) btn.classList.add('wrong');
+    btn.onclick = null;
+  });
+
+  showFeedback(isCorrect);
+}
+
+function showFeedback(isCorrect) {
+  const q = quizData[currentQ];
+  const slot = document.getElementById('feedback-slot');
+  const isLast = currentQ === quizData.length - 1;
+  const points = q.explanation.points.map(p => `<li class="flex gap-3 items-start mb-2"><span style="color: var(--moss-deep); font-weight: bold; flex-shrink: 0;">·</span><span>${p}</span></li>`).join('');
+
+  slot.innerHTML = `
+    <div class="feedback ${isCorrect ? 'success' : 'error'}">
+      <div class="flex items-center gap-3 mb-3">
+        ${isCorrect
+          ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d5f4f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+             <div class="font-serif-tc font-bold text-lg" style="color: var(--moss-deep);">答對了！</div>`
+          : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b33a3a" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+             <div class="font-serif-tc font-bold text-lg" style="color: var(--rose);">再複習一下！</div>`
+        }
+      </div>
+      <div class="font-medium mb-3" style="color: var(--ink);">${q.explanation.title}</div>
+      <ul class="text-sm" style="color: #444; line-height: 1.7;">${points}</ul>
+    </div>
+    <div class="mt-6 flex justify-end">
+      <button class="btn-primary" onclick="${isLast ? 'finishQuiz()' : 'nextQuestion()'}">
+        ${isLast ? '查看結果' : '下一題'}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function nextQuestion() {
+  currentQ++;
+  renderProgressDots();
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function finishQuiz() {
+  stopTimer();
+  showView('quiz-finish');
+
+  // Animate score
+  const finalEl = document.getElementById('final-score');
+  let n = 0;
+  const target = score;
+  if (target === 0) {
+    finalEl.textContent = '0';
+  } else {
+    const interval = setInterval(() => {
+      n++;
+      finalEl.textContent = n;
+      if (n >= target) clearInterval(interval);
+    }, 180);
+  }
+
+  // Show total time
+  document.getElementById('final-time').textContent = formatTime(elapsedSeconds);
+
+  // Comment
+  const commentEl = document.getElementById('score-comment');
+  if (score === 6) commentEl.textContent = '滿分！您已掌握每一個關鍵環節。';
+  else if (score >= 4) commentEl.textContent = '不錯的表現，再複習一次錯題就更完整了。';
+  else commentEl.textContent = '建議回到學習平台複習教材後，再來挑戰。';
+}
+</script>
+
+</body>
+</html>
