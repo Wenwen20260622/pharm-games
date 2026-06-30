@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>胰島素用藥安全練習</title>
+<style>
+  body {
+    margin: 0;
+    background: #FAF8F4;
+    color: #1F3A33;
+    font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    padding: 32px 20px;
+  }
+
+  .quiz-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 20px;
+    color: #1F3A33;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .progress {
+    font-size: 13px;
+    color: #5C6B66;
+    margin: 0 0 4px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .timer {
+    font-size: 13px;
+    color: #5C6B66;
+    margin: 0 0 16px;
+    font-weight: 500;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .timer-final {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1F3A33;
+    margin: 4px 0 0;
+  }
+
+  .quiz-card {
+    background: #FFFFFF;
+    border: 1px solid #E7E2D8;
+    border-radius: 16px;
+    padding: 28px 28px 24px;
+  }
+
+  .sentence {
+    font-size: 16px;
+    line-height: 2.6;
+    margin: 0 0 6px;
+    color: #1F3A33;
+  }
+
+  .blank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 0 4px;
+    transition: background 0.15s ease;
+  }
+
+  .blank-empty {
+    border: 1.5px dashed #C9C2B4;
+    background: #FAF8F4;
+    color: #A8A096;
+  }
+
+  .blank-filled {
+    border: 1.5px solid #5C8AA6;
+    background: #EAF1F5;
+    color: #2D5670;
+  }
+
+  .blank-correct {
+    border: 1.5px solid #5B8C6B;
+    background: #EBF4EC;
+    color: #3A6B47;
+  }
+
+  .blank-wrong {
+    border: 1.5px solid #D97B4F;
+    background: #FBEAE1;
+    color: #B8542A;
+  }
+
+  .options-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #E7E2D8;
+  }
+
+  .option-btn {
+    font-family: inherit;
+    border: 1px solid #E7E2D8;
+    background: #FFFFFF;
+    color: #1F3A33;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.1s ease;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: #D97B4F;
+    transform: translateY(-1px);
+  }
+
+  .option-btn:disabled {
+    cursor: default;
+  }
+
+  .footer-row {
+    margin-top: 24px;
+  }
+
+  .check-btn {
+    font-family: inherit;
+    display: block;
+    margin-left: auto;
+    border: 1px solid #1F3A33;
+    background: #1F3A33;
+    color: #fff;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .check-btn:hover:not(:disabled) {
+    background: #D97B4F;
+    border-color: #D97B4F;
+  }
+
+  .check-btn:disabled {
+    background: #C9C2B4;
+    border-color: #C9C2B4;
+    cursor: default;
+  }
+
+  .result-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .result-success {
+    background: #EBF4EC;
+    color: #3A6B47;
+  }
+
+  .result-danger {
+    background: #FBEAE1;
+    color: #B8542A;
+  }
+
+  .retry-btn {
+    font-family: inherit;
+    flex-shrink: 0;
+    border: 1px solid #D97B4F;
+    background: #fff;
+    color: #D97B4F;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .retry-btn:hover {
+    background: #D97B4F;
+    color: #fff;
+  }
+
+  .finish-banner {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .finish-banner .big {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1F3A33;
+    margin-bottom: 8px;
+  }
+
+  .finish-banner .small {
+    font-size: 14px;
+    color: #5C6B66;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 24px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #5C8AA6;
+    text-decoration: none;
+    border-bottom: 1px solid #5C8AA6;
+    padding-bottom: 2px;
+  }
+
+  .back-link:hover {
+    color: #D97B4F;
+    border-bottom-color: #D97B4F;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+  }
+</style>
+</head>
+<body>
+
+<div class="quiz-wrap">
+  <div class="quiz-card">
+    <div id="quiz-root">
+      <p class="progress">載入中...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const pages = [
+    {
+      title: "胰島素用藥安全與注射技巧",
+      groups: [
+        {
+          segments: [
+            "胰島素用藥需嚴格遵照醫師指示，按時施打以維持血糖穩定。若出現低血糖症狀如頭暈、",
+            "GAP",
+            "、手抖等，應儘快告知醫師或藥師。高血糖則會有口渴、",
+            "GAP",
+            "、皮膚乾紅等表現。藥品存放時要避免放在孩童容易取得的地方。"
+          ],
+          answers: ["冒冷汗", "多尿"]
+        },
+        {
+          segments: [
+            "使用胰島素注射筆時，首先要準備好注射筆、酒精棉片及針頭。注射前需撕開酒精棉片，消毒",
+            "GAP",
+            "接觸皮膚的部分。等待消毒乾燥後，將針頭保護片撕掉並",
+            "GAP",
+            "插入注射筆頂端。設定劑量時，若轉錯可直接倒轉至正確劑量。"
+          ],
+          answers: ["注射筆頂端", "垂直"]
+        },
+        {
+          segments: [
+            "注射部位以腹部",
+            "GAP",
+            "、",
+            "GAP",
+            "、大腿上半外側及",
+            "GAP",
+            "為主。注射技巧方面，過瘦病人或兒童需捏起皮膚，僅能用大姆指和食指或中指，不要捏起",
+            "GAP",
+            "。注射時針頭應避免壓陷皮膚，以免深及肌肉層。要定期檢查注射部位是否有瘀青、發紅或感染。若發現脂肪萎縮或腫塊，應立即告知醫師。"
+          ],
+          answers: ["避開肚臍周圍", "上臂外側", "臀部外上1/4", "肌肉"]
+        }
+      ],
+      distractors: ["肚臍中央", "臀部內下1/2", "興奮", "腹瀉", "無尿", "毛髮", "針頭", "紗布", "平行", "10°"]
+    },
+    {
+      title: "胰島素保存與回收方式",
+      groups: [
+        {
+          segments: [
+            "胰島素保存方式很重要，未開封藥瓶需冷藏於",
+            "GAP",
+            "，開封後則可於室溫下避光保存。已開封的胰島素最多可保存",
+            "GAP",
+            "。針頭回收時，需丟入有蓋且耐穿刺的",
+            "GAP",
+            "，例如茶葉罐或牛奶瓶。回收桶達到八分滿時，應送到醫院指定地點丟棄。使用過的注射筆則依一般廢棄物處理。"
+          ],
+          answers: ["2~8°C", "4星期", "硬殼容器"]
+        }
+      ],
+      distractors: ["0~1°C", "10~20°C", "1星期", "6個月", "塑膠袋", "夾鏈袋", "紙袋"]
+    },
+    {
+      title: "預防低血糖的日常注意事項與處理方法",
+      groups: [
+        {
+          segments: [
+            "預防低血糖的方法包括飲食要",
+            "GAP",
+            "，不要延遲用餐或吃太少。運動後適當補充點心，避免劇烈運動。胰島素或口服降血糖藥需依照醫師指示使用。注射胰島素後5~15分鐘內一定要進食。定期自我監測血糖，可有效降低低血糖風險。"
+          ],
+          answers: ["定時定量"]
+        },
+        {
+          segments: [
+            "發生低血糖時，血糖值會低於",
+            "GAP",
+            "，常見原因包括進食過少或運動過度。低血糖症狀可能有飢餓感、心跳加快、發抖和",
+            "GAP",
+            "。嚴重時甚至會出現意識不清、昏迷等危險情形。處理時，若血糖低於50mg/dL，需立即補充",
+            "GAP",
+            "。昏迷者則應側臥並立刻送醫治療。"
+          ],
+          answers: ["70mg/dL", "冒汗", "30公克糖類"]
+        }
+      ],
+      distractors: ["隨意進食", "多吃少動", "100mg/dL", "流鼻水", "咳嗽", "巧克力", "蔬菜"]
+    }
+  ];
+
+  let pageIndex = 0;
+  let options = [];
+  let filled = {};
+  let checked = false;
+  let elapsedSeconds = 0;
+  let timerInterval = null;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function formatTime(totalSeconds){
+    const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const s = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function startTimer(){
+    if(timerInterval) return;
+    timerInterval = setInterval(() => {
+      elapsedSeconds++;
+      const el = document.getElementById('quiz-timer');
+      if(el) el.textContent = `已花費時間：${formatTime(elapsedSeconds)}`;
+    }, 1000);
+  }
+
+  function stopTimer(){
+    if(timerInterval){
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function initPage(){
+    const page = pages[pageIndex];
+    const flatBlanks = getFlatBlanks(page);
+    options = shuffle(flatBlanks.map(b=>b.answer).concat(page.distractors));
+    filled = {};
+    checked = false;
+    render();
+    startTimer();
+  }
+
+  function getFlatBlanks(page){
+    const flat = [];
+    page.groups.forEach((g, gi) => {
+      g.answers.forEach((ans, ai) => {
+        flat.push({ groupIndex: gi, answerIndexInGroup: ai, answer: ans });
+      });
+    });
+    return flat;
+  }
+
+  function selectOption(opt){
+    if(checked) return;
+    const page = pages[pageIndex];
+    const flatBlanks = getFlatBlanks(page);
+    if(Object.values(filled).includes(opt)) return;
+    const emptyIdx = flatBlanks.findIndex((b, i) => !filled[i]);
+    if(emptyIdx === -1) return;
+    filled[emptyIdx] = opt;
+    render();
+  }
+
+  function clearBlank(idx){
+    if(checked) return;
+    delete filled[idx];
+    render();
+  }
+
+  function checkAnswers(){
+    checked = true;
+    render();
+  }
+
+  function retryPage(){
+    initPage();
+  }
+
+  function nextPage(){
+    if(pageIndex < pages.length - 1){
+      pageIndex++;
+      initPage();
+    } else {
+      renderFinish();
+    }
+  }
+
+  function renderFinish(){
+    stopTimer();
+    const root = document.getElementById('quiz-root');
+    root.innerHTML = `
+      <div class="finish-banner">
+        <div class="big">✓ 全部練習完成！</div>
+        <div class="small">您已完成 胰島素用藥安全 相關練習。</div>
+        <div class="timer-final">總耗時：${formatTime(elapsedSeconds)}</div>
+        <a class="back-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning">回藥劑部學習平台</a>
+      </div>
+    `;
+  }
+
+  function render(){
+    const root = document.getElementById('quiz-root');
+    const page = pages[pageIndex];
+    const flatBlanks = getFlatBlanks(page);
+    const allFilled = flatBlanks.every((b,i)=>filled[i]);
+    const usedOptions = new Set(Object.values(filled));
+
+    let blankGlobalIndex = 0;
+
+    let groupsHtml = page.groups.map((g) => {
+      let html = `<p class="sentence">`;
+      g.segments.forEach(seg => {
+        if(seg === "GAP"){
+          const i = blankGlobalIndex;
+          const blankInfo = flatBlanks[i];
+          const val = filled[i];
+          let cls = "blank ";
+          let content = "&nbsp;";
+
+          if(!val){
+            cls += "blank-empty";
+          } else if(!checked){
+            cls += "blank-filled";
+            content = val;
+          } else {
+            const isCorrect = val === blankInfo.answer;
+            cls += isCorrect ? "blank-correct" : "blank-wrong";
+            content = val + (isCorrect ? " ✓" : " ✗");
+          }
+
+          const clickAttr = !checked ? `onclick="window.__quiz.clearBlank(${i})"` : "";
+          html += `<span class="${cls}" ${clickAttr}>${content}</span>`;
+          blankGlobalIndex++;
+        } else {
+          html += seg;
+        }
+      });
+      html += `</p>`;
+      return html;
+    }).join("");
+
+    let optionsHtml = options.map(opt => {
+      const used = usedOptions.has(opt);
+      const disabled = used || checked;
+      return `<button
+        class="option-btn"
+        onclick="window.__quiz.selectOption('${opt.replace(/'/g,"\\'")}')"
+        ${disabled ? 'disabled' : ''}
+        style="opacity:${used ? 0.35 : 1};"
+      >${opt}</button>`;
+    }).join("");
+
+    let footer = "";
+    if(checked){
+      const allCorrect = flatBlanks.every((b,i)=>filled[i]===b.answer);
+      if(allCorrect){
+        const isLastPage = pageIndex === pages.length - 1;
+        footer = `<div class="result-banner result-success">
+          <span>✓ 所有答案都正確！非常好！</span>
+          <button class="retry-btn" onclick="window.__quiz.nextPage()">${isLastPage ? '完成' : '下一頁'}</button>
+        </div>`;
+      } else {
+        footer = `<div class="result-banner result-danger">
+          <span>✗ 有答案不正確，請再試一次</span>
+          <button class="retry-btn" onclick="window.__quiz.retryPage()">重新作答</button>
+        </div>`;
+      }
+    } else {
+      footer = `<button class="check-btn" onclick="window.__quiz.checkAnswers()" ${!allFilled ? 'disabled' : ''}>檢查</button>`;
+    }
+
+    root.innerHTML = `
+      <h2 class="page-title">${page.title}</h2>
+      <p class="progress">第 ${pageIndex + 1} / ${pages.length} 頁</p>
+      <p class="timer" id="quiz-timer">已花費時間：${formatTime(elapsedSeconds)}</p>
+      <div>${groupsHtml}</div>
+      <div class="options-row">${optionsHtml}</div>
+      <div class="footer-row">${footer}</div>
+    `;
+  }
+
+  window.__quiz = { selectOption, clearBlank, checkAnswers, retryPage, nextPage };
+  initPage();
+})();
+</script>
+
+</body></html>
