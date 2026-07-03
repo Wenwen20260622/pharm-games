@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>潤娃易利達吸入劑衛教練習</title>
+<style>
+  body {
+    margin: 0;
+    background: #FAF8F4;
+    color: #1F3A33;
+    font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    padding: 32px 20px;
+  }
+
+  .quiz-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 20px;
+    color: #1F3A33;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .progress {
+    font-size: 13px;
+    color: #5C6B66;
+    margin: 0 0 4px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .timer {
+    font-size: 13px;
+    color: #5C6B66;
+    margin: 0 0 16px;
+    font-weight: 500;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .timer-final {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1F3A33;
+    margin: 4px 0 0;
+  }
+
+  .quiz-card {
+    background: #FFFFFF;
+    border: 1px solid #E7E2D8;
+    border-radius: 16px;
+    padding: 28px 28px 24px;
+  }
+
+  .sentence {
+    font-size: 16px;
+    line-height: 2.6;
+    margin: 0 0 6px;
+    color: #1F3A33;
+  }
+
+  .blank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 0 4px;
+    transition: background 0.15s ease;
+  }
+
+  .blank-empty {
+    border: 1.5px dashed #C9C2B4;
+    background: #FAF8F4;
+    color: #A8A096;
+  }
+
+  .blank-filled {
+    border: 1.5px solid #5C8AA6;
+    background: #EAF1F5;
+    color: #2D5670;
+  }
+
+  .blank-correct {
+    border: 1.5px solid #5B8C6B;
+    background: #EBF4EC;
+    color: #3A6B47;
+  }
+
+  .blank-wrong {
+    border: 1.5px solid #D97B4F;
+    background: #FBEAE1;
+    color: #B8542A;
+  }
+
+  .options-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #E7E2D8;
+  }
+
+  .option-btn {
+    font-family: inherit;
+    border: 1px solid #E7E2D8;
+    background: #FFFFFF;
+    color: #1F3A33;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.1s ease;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: #D97B4F;
+    transform: translateY(-1px);
+  }
+
+  .option-btn:disabled {
+    cursor: default;
+  }
+
+  .footer-row {
+    margin-top: 24px;
+  }
+
+  .check-btn {
+    font-family: inherit;
+    display: block;
+    margin-left: auto;
+    border: 1px solid #1F3A33;
+    background: #1F3A33;
+    color: #fff;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  .check-btn:hover:not(:disabled) {
+    background: #D97B4F;
+    border-color: #D97B4F;
+  }
+
+  .check-btn:disabled {
+    background: #C9C2B4;
+    border-color: #C9C2B4;
+    cursor: default;
+  }
+
+  .result-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .result-success {
+    background: #EBF4EC;
+    color: #3A6B47;
+  }
+
+  .result-danger {
+    background: #FBEAE1;
+    color: #B8542A;
+  }
+
+  .retry-btn {
+    font-family: inherit;
+    flex-shrink: 0;
+    border: 1px solid #D97B4F;
+    background: #fff;
+    color: #D97B4F;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .retry-btn:hover {
+    background: #D97B4F;
+    color: #fff;
+  }
+
+  .finish-banner {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .finish-banner .big {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1F3A33;
+    margin-bottom: 8px;
+  }
+
+  .finish-banner .small {
+    font-size: 14px;
+    color: #5C6B66;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 24px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #5C8AA6;
+    text-decoration: none;
+    border-bottom: 1px solid #5C8AA6;
+    padding-bottom: 2px;
+  }
+
+  .back-link:hover {
+    color: #D97B4F;
+    border-bottom-color: #D97B4F;
+  }
+</style>
+</head>
+<body>
+
+<div class="quiz-wrap">
+  <div class="quiz-card">
+    <div id="quiz-root">
+      <p class="progress">載入中...</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const pages = [
+    {
+      title: "藥物認識與適應症",
+      groups: [
+        {
+          segments: [
+            "潤娃易利達吸入劑是一種適用於慢性阻塞性肺病",
+            "GAP",
+            "和氣喘患者的維持治療藥物，主要成分為",
+            "GAP",
+            "及vilanterol。此藥物屬於ICS/",
+            "GAP",
+            "複方製劑，能有效改善",
+            "GAP",
+            "症狀。患者每日只需吸入一次，建議於固定時間使用。吸入後應以水漱口，避免發生口咽",
+            "GAP",
+            "的風險。此藥物須由醫師處方，並不適用於緩解急性支氣管痙攣。"
+          ],
+          answers: ["COPD", "fluticasone furoate", "LABA", "氣道阻塞", "念珠菌病"]
+        }
+      ],
+      distractors: ["salbutamol", "budesonide", "流鼻水", "胸痛", "MRSA", "LAMA", "黃金葡萄球菌"]
+    },
+    {
+      title: "吸入器操作與劑量管理",
+      groups: [
+        {
+          segments: [
+            "潤娃易利達吸入劑的正確使用方式是將吸口蓋向下滑到底，聽到",
+            "GAP",
+            "聲後即可準備吸入藥物。吸入時應以",
+            "GAP",
+            "的方式深吸一口氣，並閉上雙唇緊含",
+            "GAP",
+            "。吸入後要摒住氣至少3至4秒，然後慢慢輕輕地呼氣。使用完畢後，請以水漱口並將水",
+            "GAP",
+            "，不可吞下。"
+          ],
+          answers: ["卡嗒", "長而穩定", "吸口", "吐出"]
+        },
+        {
+          segments: [
+            "劑量計數器會",
+            "GAP",
+            "數字，提醒剩餘藥量。當劑量計數器顯示",
+            "GAP",
+            "時，左邊會呈現紅色提醒需準備新的吸入器。衛教時要提醒患者勿將氣吹入吸口，也不可意外吸入過多藥物。"
+          ],
+          answers: ["遞減", "小於10劑"]
+        }
+      ],
+      distractors: ["打開", "喝下", "咻咻", "嘩啦", "快速且急促", "遞增", "小於50劑", "大於20劑"]
+    },
+    {
+      title: "不良反應與用藥安全",
+      groups: [
+        {
+          segments: [
+            "潤娃易利達吸入劑的主要不良反應包括口咽念珠菌病、肺炎、免疫抑制及",
+            "GAP",
+            "降低。長期使用ICS產品可能導致骨質疏鬆症，建議高齡患者定期評估骨質狀況。若患者出現視覺症狀或長期使用，應考慮轉診至眼科醫師。衛教時要提醒患者若有嚴重",
+            "GAP",
+            "過敏不可使用此藥。"
+          ],
+          answers: ["骨質密度", "乳蛋白"]
+        },
+        {
+          segments: [
+            "潤娃易利達吸入劑不可用於緩解",
+            "GAP",
+            "支氣管痙攣或危及生命的發作。若病情惡化或短效型β2腎上腺素作用劑需求量增加，應立即重新評估治療方式。患者每天不可吸入超過",
+            "GAP",
+            "，避免用藥過量。若出現過敏反應如皮疹、蕁麻疹或血管性水腫，應立即停用並聯絡醫師。"
+          ],
+          answers: ["急性", "一次"]
+        }
+      ],
+      distractors: ["增加", "血壓", "體重", "症狀", "黃豆", "十次", "慢性", "中性"]
+    }
+  ];
+
+  let pageIndex = 0;
+  let options = [];
+  let filled = {};
+  let checked = false;
+  let elapsedSeconds = 0;
+  let timerInterval = null;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function formatTime(totalSeconds){
+    const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const s = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function startTimer(){
+    if(timerInterval) return;
+    timerInterval = setInterval(() => {
+      elapsedSeconds++;
+      const el = document.getElementById('quiz-timer');
+      if(el) el.textContent = `已花費時間：${formatTime(elapsedSeconds)}`;
+    }, 1000);
+  }
+
+  function stopTimer(){
+    if(timerInterval){
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function initPage(){
+    const page = pages[pageIndex];
+    const flatBlanks = getFlatBlanks(page);
+    options = shuffle(flatBlanks.map(b=>b.answer).concat(page.distractors));
+    filled = {};
+    checked = false;
+    render();
+    startTimer();
+  }
+
+  function getFlatBlanks(page){
+    const flat = [];
+    page.groups.forEach((g) => {
+      g.answers.forEach((ans) => {
+        flat.push({ answer: ans });
+      });
+    });
+    return flat;
+  }
+
+  function selectOption(opt){
+    if(checked) return;
+    const page = pages[pageIndex];
+    const flatBlanks = getFlatBlanks(page);
+    if(Object.values(filled).includes(opt)) return;
+    const emptyIdx = flatBlanks.findIndex((b, i) => !filled[i]);
+    if(emptyIdx === -1) return;
+    filled[emptyIdx] = opt;
+    render();
+  }
+
+  function clearBlank(idx){
+    if(checked) return;
+    delete filled[idx];
+    render();
+  }
+
+  function checkAnswers(){
+    checked = true;
+    render();
+  }
+
+  function retryPage(){
+    initPage();
+  }
+
+  function nextPage(){
+    if(pageIndex < pages.length - 1){
+      pageIndex++;
+      initPage();
+    } else {
+      renderFinish();
+    }
+  }
+
+  function renderFinish(){
+    stopTimer();
+    const root = document.getElementById('quiz-root');
+    root.innerHTML = `
+      <div class="finish-banner">
+        <div class="big">✓ 全部練習完成！</div>
+        <div class="small">您已完成 潤娃易利達吸入劑 相關練習。</div>
+        <div class="timer-final">總耗時：${formatTime(elapsedSeconds)}</div>
+        <a class="back-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning">回藥劑部學習平台</a>
+      </div>
+    `;
+  }
+
+  function render(){
+    const root = document.getElementById('quiz-root');
+    const page = pages[pageIndex];
+    const flatBlanks = getFlatBlanks(page);
+    const allFilled = flatBlanks.every((b,i) => filled[i]);
+    const usedOptions = new Set(Object.values(filled));
+
+    let blankGlobalIndex = 0;
+
+    let groupsHtml = page.groups.map((g) => {
+      let html = `<p class="sentence">`;
+      g.segments.forEach(seg => {
+        if(seg === "GAP"){
+          const i = blankGlobalIndex;
+          const blankInfo = flatBlanks[i];
+          const val = filled[i];
+          let cls = "blank ";
+          let content = "&nbsp;";
+
+          if(!val){
+            cls += "blank-empty";
+          } else if(!checked){
+            cls += "blank-filled";
+            content = val;
+          } else {
+            const isCorrect = val === blankInfo.answer;
+            cls += isCorrect ? "blank-correct" : "blank-wrong";
+            content = val + (isCorrect ? " ✓" : " ✗");
+          }
+
+          const clickAttr = !checked ? `onclick="window.__quiz.clearBlank(${i})"` : "";
+          html += `<span class="${cls}" ${clickAttr}>${content}</span>`;
+          blankGlobalIndex++;
+        } else {
+          html += seg;
+        }
+      });
+      html += `</p>`;
+      return html;
+    }).join("");
+
+    let optionsHtml = options.map(opt => {
+      const used = usedOptions.has(opt);
+      const disabled = used || checked;
+      return `<button
+        class="option-btn"
+        onclick="window.__quiz.selectOption('${opt.replace(/'/g,"\\'")}')"
+        ${disabled ? 'disabled' : ''}
+        style="opacity:${used ? 0.35 : 1};"
+      >${opt}</button>`;
+    }).join("");
+
+    let footer = "";
+    if(checked){
+      const allCorrect = flatBlanks.every((b,i) => filled[i] === b.answer);
+      if(allCorrect){
+        const isLastPage = pageIndex === pages.length - 1;
+        footer = `<div class="result-banner result-success">
+          <span>✓ 所有答案都正確！非常好！</span>
+          <button class="retry-btn" onclick="window.__quiz.nextPage()">${isLastPage ? '完成' : '下一頁'}</button>
+        </div>`;
+      } else {
+        footer = `<div class="result-banner result-danger">
+          <span>✗ 有答案不正確，請再試一次</span>
+          <button class="retry-btn" onclick="window.__quiz.retryPage()">重新作答</button>
+        </div>`;
+      }
+    } else {
+      footer = `<button class="check-btn" onclick="window.__quiz.checkAnswers()" ${!allFilled ? 'disabled' : ''}>檢查</button>`;
+    }
+
+    root.innerHTML = `
+      <h2 class="page-title">${page.title}</h2>
+      <p class="progress">第 ${pageIndex + 1} / ${pages.length} 頁</p>
+      <p class="timer" id="quiz-timer">已花費時間：${formatTime(elapsedSeconds)}</p>
+      <div>${groupsHtml}</div>
+      <div class="options-row">${optionsHtml}</div>
+      <div class="footer-row">${footer}</div>
+    `;
+  }
+
+  window.__quiz = { selectOption, clearBlank, checkAnswers, retryPage, nextPage };
+  initPage();
+})();
+</script>
+
+</body></html>
