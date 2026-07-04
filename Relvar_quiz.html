@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>潤娃易利達吸入劑｜自我檢核測驗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Noto+Serif+TC:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root{
+    --bg-soft:#faf8f3;
+    --bg-card:#f5f2ec;
+    --moss:#2d5f4f;
+    --moss-dark:#204339;
+    --amber:#d4823c;
+    --amber-dark:#b5692a;
+    --rose:#b33a3a;
+    --ink:#2c2c2a;
+    --ink-soft:#6b6b63;
+    --line:#e2ddd0;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg-soft);
+    color:var(--ink);
+    font-family:'Noto Sans TC', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .serif{ font-family:'Noto Serif TC','Playfair Display',serif; }
+  .display{ font-family:'Playfair Display','Noto Serif TC',serif; }
+
+  .view{ display:none; }
+  .view.active{
+    display:block;
+    animation: fadeIn .5s ease;
+  }
+  @keyframes fadeIn{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .app-shell{
+    max-width:760px;
+    margin:0 auto;
+    padding:0 20px 48px;
+  }
+
+  /* Header */
+  header.top{
+    border-bottom:1px solid var(--line);
+    background:var(--bg-soft);
+  }
+  .top-inner{
+    max-width:760px;
+    margin:0 auto;
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brand-icon{
+    width:44px;height:44px;
+    border-radius:12px;
+    background:var(--moss);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    flex-shrink:0;
+  }
+  .brand-name{
+    font-size:1.05rem;
+    font-weight:700;
+    color:var(--moss-dark);
+    line-height:1.3;
+  }
+  .brand-sub{
+    font-size:.78rem;
+    color:var(--ink-soft);
+    letter-spacing:.05em;
+  }
+  .platform-link{
+    font-size:.82rem;
+    color:var(--amber-dark);
+    text-decoration:none;
+    border-bottom:1px solid var(--amber-dark);
+    white-space:nowrap;
+  }
+  .platform-link:hover{ opacity:.75; }
+
+  /* Intro */
+  .intro-hero{
+    text-align:center;
+    padding:56px 8px 8px;
+  }
+  .intro-eyebrow{
+    display:inline-block;
+    font-size:.75rem;
+    letter-spacing:.16em;
+    color:var(--amber-dark);
+    background:rgba(212,130,60,.12);
+    padding:5px 14px;
+    border-radius:999px;
+    margin-bottom:18px;
+  }
+  .intro-title{
+    font-size:2rem;
+    font-weight:700;
+    color:var(--moss-dark);
+    line-height:1.4;
+    margin-bottom:14px;
+  }
+  .intro-desc{
+    color:var(--ink-soft);
+    font-size:.98rem;
+    line-height:1.9;
+    max-width:520px;
+    margin:0 auto 34px;
+  }
+  .stat-cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:36px;
+  }
+  .stat-card{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 8px;
+  }
+  .stat-num{
+    font-size:1.5rem;
+    font-weight:700;
+    color:var(--moss);
+  }
+  .stat-label{
+    font-size:.75rem;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
+  .btn-start{
+    background:var(--moss);
+    color:#fff;
+    border:none;
+    padding:15px 44px;
+    font-size:1rem;
+    font-weight:700;
+    border-radius:999px;
+    cursor:pointer;
+    letter-spacing:.04em;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .btn-start:hover{ background:var(--moss-dark); transform:translateY(-1px); }
+
+  /* Quiz body */
+  .quiz-topbar{
+    padding-top:28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  }
+  .q-progress-text{
+    font-size:.85rem;
+    color:var(--ink-soft);
+    font-weight:500;
+  }
+  .q-timer{
+    font-size:.85rem;
+    color:var(--moss-dark);
+    font-weight:700;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    padding:4px 12px;
+    border-radius:999px;
+  }
+  .dots{
+    display:flex;
+    gap:6px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .dot{
+    width:8px;height:8px;
+    border-radius:50%;
+    background:var(--line);
+  }
+  .dot.done{ background:var(--moss); }
+  .dot.current{ background:var(--amber); }
+  .progress-bar-track{
+    width:100%;
+    height:6px;
+    background:var(--line);
+    border-radius:999px;
+    overflow:hidden;
+    margin-bottom:28px;
+  }
+  .progress-bar-fill{
+    height:100%;
+    background:var(--amber);
+    border-radius:999px;
+    transition:width .3s ease;
+  }
+
+  .q-card{
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:30px 26px;
+  }
+  .q-title{
+    font-size:1.15rem;
+    font-weight:700;
+    color:var(--moss-dark);
+    line-height:1.6;
+    margin-bottom:8px;
+  }
+  .q-instruction{
+    font-size:.88rem;
+    color:var(--ink-soft);
+    margin-bottom:22px;
+    line-height:1.7;
+  }
+  .q-instruction strong{ color:var(--amber-dark); }
+
+  .option-btn{
+    display:block;
+    width:100%;
+    text-align:left;
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:10px;
+    font-size:.95rem;
+    color:var(--ink);
+    cursor:pointer;
+    transition:border-color .15s ease, background .15s ease;
+    font-family:inherit;
+  }
+  .option-btn:hover:not(.disabled){
+    border-color:var(--moss);
+    background:#fdfcf9;
+  }
+  .option-btn.selected{
+    border-color:var(--amber);
+    background:rgba(212,130,60,.08);
+  }
+  .option-btn.correct{
+    border-color:var(--moss);
+    background:rgba(45,95,79,.10);
+    color:var(--moss-dark);
+    font-weight:700;
+  }
+  .option-btn.wrong{
+    border-color:var(--rose);
+    background:rgba(179,58,58,.08);
+    color:var(--rose);
+    font-weight:700;
+  }
+  .option-btn.disabled{ cursor:default; }
+
+  .option-prefix{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:22px;height:22px;
+    border-radius:6px;
+    background:var(--bg-soft);
+    border:1px solid var(--line);
+    font-size:.75rem;
+    margin-right:10px;
+    font-weight:700;
+    color:var(--ink-soft);
+  }
+
+  .submit-multi-btn{
+    display:block;
+    width:100%;
+    background:var(--amber);
+    color:#fff;
+    border:none;
+    padding:13px;
+    border-radius:12px;
+    font-size:.95rem;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:6px;
+  }
+  .submit-multi-btn:hover{ background:var(--amber-dark); }
+  .submit-multi-btn:disabled{ opacity:.45; cursor:not-allowed; }
+
+  /* Feedback */
+  .feedback{
+    margin-top:20px;
+    border-radius:14px;
+    padding:20px 20px 6px;
+    border-left:5px solid var(--moss);
+    background:#fff;
+  }
+  .feedback.error{ border-left-color:var(--rose); }
+  .fb-head{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .fb-icon{
+    width:28px;height:28px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    background:var(--moss);
+    flex-shrink:0;
+    font-size:.9rem;
+  }
+  .feedback.error .fb-icon{ background:var(--rose); }
+  .fb-title{
+    font-weight:700;
+    font-size:1rem;
+    color:var(--moss-dark);
+  }
+  .feedback.error .fb-title{ color:var(--rose); }
+  .fb-summary{
+    font-size:.92rem;
+    font-weight:600;
+    color:var(--ink);
+    margin-bottom:12px;
+    line-height:1.7;
+  }
+  .fb-points{
+    margin:0 0 18px;
+    padding-left:1.2em;
+    font-size:.88rem;
+    color:var(--ink-soft);
+    line-height:1.9;
+  }
+  .fb-points li{ margin-bottom:4px; }
+  .fb-points strong{ color:var(--moss-dark); }
+  .feedback.error .fb-points strong{ color:var(--rose); }
+
+  .btn-next{
+    display:block;
+    width:100%;
+    background:var(--moss);
+    color:#fff;
+    border:none;
+    padding:13px;
+    border-radius:12px;
+    font-size:.95rem;
+    font-weight:700;
+    cursor:pointer;
+    margin-bottom:20px;
+  }
+  .btn-next:hover{ background:var(--moss-dark); }
+
+  /* Finish */
+  .finish-wrap{
+    text-align:center;
+    padding:52px 8px 8px;
+  }
+  .score-ring{
+    width:170px;height:170px;
+    border-radius:50%;
+    border:8px solid var(--moss);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 26px;
+    background:var(--bg-card);
+  }
+  .score-num{
+    font-size:2.6rem;
+    font-weight:800;
+    color:var(--moss-dark);
+    font-family:'Playfair Display', serif;
+  }
+  .score-label{
+    font-size:.78rem;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .finish-meta{
+    display:flex;
+    justify-content:center;
+    gap:28px;
+    margin-bottom:22px;
+    font-size:.85rem;
+    color:var(--ink-soft);
+  }
+  .finish-meta b{ color:var(--moss-dark); }
+  .finish-comment{
+    font-size:1rem;
+    color:var(--ink);
+    line-height:1.9;
+    max-width:460px;
+    margin:0 auto 32px;
+    background:var(--bg-card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px;
+  }
+  .finish-actions{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+  }
+  .btn-restart{
+    background:transparent;
+    color:var(--moss-dark);
+    border:1.5px solid var(--moss);
+    padding:12px 32px;
+    border-radius:999px;
+    font-weight:700;
+    cursor:pointer;
+    font-size:.92rem;
+  }
+  .btn-restart:hover{ background:var(--moss); color:#fff; }
+  .finish-back-link{
+    font-size:.85rem;
+    color:var(--amber-dark);
+    text-decoration:none;
+    border-bottom:1px solid var(--amber-dark);
+  }
+
+  /* Footer */
+  footer.disclaimer{
+    max-width:760px;
+    margin:40px auto 0;
+    padding:18px 20px;
+    text-align:center;
+    font-size:.75rem;
+    color:var(--ink-soft);
+    border-top:1px solid var(--line);
+    line-height:1.8;
+  }
+
+  @media (max-width:480px){
+    .intro-title{ font-size:1.5rem; }
+    .stat-cards{ gap:8px; }
+    .stat-num{ font-size:1.2rem; }
+    .q-card{ padding:22px 18px; }
+    .finish-meta{ gap:16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 9c0-2.76 2.24-5 5-5s5 2.24 5 5v3.5c0 1-.5 1.5-1.5 2L14 15.5V19a2 2 0 0 1-4 0v-3.5l-1.5-1c-1-.5-1.5-1-1.5-2V9z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/>
+          <line x1="9" y1="8" x2="15" y2="8" stroke="white" stroke-width="1.6"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name serif">潤娃易利達吸入劑</div>
+        <div class="brand-sub">自我檢核測驗</div>
+      </div>
+    </div>
+    <a class="platform-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning" target="_blank" rel="noopener">藥劑部學習平台</a>
+  </div>
+</header>
+
+<div class="app-shell">
+
+  <!-- Intro -->
+  <section id="quiz-intro" class="view active">
+    <div class="intro-hero">
+      <span class="intro-eyebrow">用藥安全衛教</span>
+      <h1 class="intro-title serif">操作要點與衛教重點<br>自我檢核</h1>
+      <p class="intro-desc">
+        本測驗聚焦潤娃易利達吸入劑（Relvar Ellipta）的正確操作五步驟、常見錯誤與用藥安全須知，
+        協助您確認自己是否掌握每一項衛教重點。
+      </p>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-num">12</div>
+          <div class="stat-label">題目數量</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">可重複挑戰</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">5</div>
+          <div class="stat-label">預估分鐘</div>
+        </div>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">開始測驗</button>
+    </div>
+  </section>
+
+  <!-- Quiz body -->
+  <section id="quiz-body" class="view">
+    <div class="quiz-topbar">
+      <span class="q-progress-text" id="progress-text">Question 1 / 12</span>
+      <span class="q-timer" id="timer">00:00</span>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+    </div>
+    <div id="quiz-content"></div>
+  </section>
+
+  <!-- Finish -->
+  <section id="quiz-finish" class="view">
+    <div class="finish-wrap">
+      <div class="score-ring">
+        <div class="score-num" id="final-score">0</div>
+        <div class="score-label">/ 12 答對</div>
+      </div>
+      <div class="finish-meta">
+        <div>總耗時：<b id="final-time">00:00</b></div>
+      </div>
+      <div class="finish-comment" id="final-comment"></div>
+      <div class="finish-actions">
+        <button class="btn-restart" onclick="restartQuiz()">重新挑戰</button>
+        <a class="finish-back-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning" target="_blank" rel="noopener">回學習平台</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="disclaimer">
+  本測驗僅供教育訓練，非正式醫療指引。實際操作請依醫囑與藥品仿單為準。
+</footer>
+
+<script>
+/* ===================== 資料 ===================== */
+const quizData = [
+  {
+    type: 'single',
+    title: '潤娃易利達吸入劑主要適應症為何？',
+    instruction: '',
+    options: [
+      '慢性阻塞性肺病(COPD)維持治療、18歲以上氣喘',
+      '急性氣喘發作時的緊急舒喘',
+      '一般感冒咳嗽症狀緩解',
+      '過敏性鼻炎'
+    ],
+    correct: 0,
+    explanation: {
+      title: '潤娃易利達是COPD與氣喘的長效維持藥物，不是急救用藥。',
+      points: [
+        '適應症為<strong>慢性阻塞性肺病(COPD)維持治療</strong>及<strong>18歲以上氣喘</strong>',
+        '這是<strong>每天保養氣管用的藥</strong>，不是喘的時候才吸',
+        '絕對不可作為急性支氣管痙攣的<strong>急救吸入器</strong>'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '潤娃易利達吸入劑的主要成分為何？',
+    instruction: '',
+    options: [
+      'Salbutamol（短效支氣管擴張劑）',
+      'Fluticasone furoate（類固醇）+ Vilanterol（長效β2刺激劑）',
+      'Budesonide 單方類固醇',
+      'Ipratropium bromide'
+    ],
+    correct: 1,
+    explanation: {
+      title: '本藥為類固醇與長效支氣管擴張劑的複方製劑。',
+      points: [
+        '主成分為 <strong>Fluticasone furoate（類固醇 ICS）+ Vilanterol（長效β2刺激劑 LABA）</strong>',
+        '兩種成分協同作用，兼顧消炎與擴張氣管',
+        '因含類固醇成分，<strong>長期使用需注意骨質密度與青光眼/白內障風險</strong>'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '潤娃易利達吸入劑的正確用藥頻率為？',
+    instruction: '',
+    options: [
+      '一日三次，三餐飯後',
+      '感覺喘的時候才使用',
+      '每日一次，固定時間使用',
+      '每兩天一次'
+    ],
+    correct: 2,
+    explanation: {
+      title: '本藥為每日一次的長效維持藥物，須規律使用。',
+      points: [
+        '正確頻率為<strong>每日一次</strong>，建議固定時間服用',
+        '即使症狀好轉，<strong>也不可擅自停藥</strong>',
+        '若忘記使用，應盡快補吸，但<strong>不可在隔日使用雙倍劑量</strong>'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '吸入器操作五步驟中，第一步是什麼？',
+    instruction: '',
+    options: [
+      '雙唇緊含吸口深吸氣',
+      '將吸口蓋推到底，聽到「喀搭」聲即完成上藥',
+      '將肺部氣體吐光',
+      '關閉蓋子並漱口'
+    ],
+    correct: 1,
+    explanation: {
+      title: '打開吸口蓋是上藥的第一步，聽到「喀搭」聲才算完成。',
+      points: [
+        '將保護蓋向下滑動，直到聽到明顯的<strong>「Click（喀搭）」聲</strong>',
+        '劑量計數器會自動減一，代表<strong>藥物已準備好</strong>',
+        '<strong>不可為了確認聲音反覆開關蓋子</strong>，若開蓋後未吸入就關上，該劑藥物會被浪費（不會累積成雙倍劑量）'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '吸藥前應如何呼氣？',
+    instruction: '',
+    options: [
+      '直接對著吸口用力吐氣',
+      '用鼻子深吸一口氣後再吐',
+      '將頭轉向側邊，盡量把肺部氣體吐光',
+      '不需要吐氣，直接吸入'
+    ],
+    correct: 2,
+    explanation: {
+      title: '吸藥前應避開吸入器，將肺部空氣吐乾淨，才能吸得深、吸得足。',
+      points: [
+        '正確做法是<strong>將頭轉向側邊</strong>，盡量把肺部氣體吐光',
+        '<strong>嚴禁對著吸口吐氣</strong>，人體吐出的氣體含濕氣，會讓乾燥藥粉結塊，導致下一次吸不到藥'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '吸藥時應如何含住吸口並吸氣？',
+    instruction: '',
+    options: [
+      '雙唇緊含吸口，平穩深長地吸氣',
+      '用鼻子吸氣',
+      '吸口蓋未開就直接吸',
+      '吸氣要又猛又急促才有效'
+    ],
+    correct: 0,
+    explanation: {
+      title: '雙唇要緊密含住吸口，用嘴巴平穩深長地吸氣約4-5秒。',
+      points: [
+        '<strong>雙唇緊密含住吸口</strong>，由嘴巴發力，平穩且深長地吸氣',
+        '手指握在機身兩側，<strong>切勿遮蔽通氣孔</strong>',
+        '<strong>不可從鼻子吸氣</strong>；吸氣太猛太急促會讓藥粉高速撞擊卡在喉嚨'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '吸藥後閉氣的建議時間為？',
+    instruction: '',
+    options: [
+      '20秒以上',
+      '3-4秒，或在個人舒適的極限內盡量閉氣',
+      '1秒',
+      '不需要閉氣'
+    ],
+    correct: 1,
+    explanation: {
+      title: '閉氣是讓藥物沉降肺部的關鍵步驟，建議閉氣3-4秒。',
+      points: [
+        '建議閉氣 <strong>3-4秒</strong>（或在個人舒適的極限內盡量閉氣）',
+        '閉氣是發揮藥效的黃金關鍵，<strong>沒有閉氣，藥物微粒會隨下一次吐氣直接離開肺部</strong>，等於白吸了',
+        '完成閉氣後，再緩慢、輕輕地將氣吐出'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '吸藥後為何要漱口？',
+    instruction: '',
+    options: [
+      '增加藥效',
+      '清除口腔異味',
+      '預防口腔念珠菌感染',
+      '避免牙齒變色'
+    ],
+    correct: 2,
+    explanation: {
+      title: '漱口是為了預防類固醇殘留口腔造成的感染。',
+      points: [
+        '主要目的是<strong>預防口腔念珠菌感染</strong>（鵝口瘡）與聲音沙啞',
+        '建議「<strong>仰頭咕嚕咕嚕</strong>」清刷喉嚨深處',
+        '<strong>漱口水務必吐掉，絕對不可以吞入肚子裡</strong>'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '潤娃易利達吸入劑的禁忌症為何？',
+    instruction: '',
+    options: [
+      '高血壓',
+      '糖尿病',
+      '腎功能不全',
+      '嚴重乳蛋白過敏'
+    ],
+    correct: 3,
+    explanation: {
+      title: '本藥含乳糖賦形劑，嚴重乳蛋白過敏者禁用。',
+      points: [
+        '禁忌症為<strong>嚴重乳蛋白過敏 (Severe Milk Protein Allergy)</strong>',
+        '乾粉吸入劑(DPI)中含有<strong>乳糖賦形劑</strong>',
+        '開藥前務必確認病人<strong>沒有嚴重的乳製品過敏史</strong>'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '吸入器剩餘劑量小於10時，計數器會出現什麼提醒？',
+    instruction: '',
+    options: [
+      '計數器變藍色',
+      '計數器左半邊顯示紅色',
+      '計數器閃爍',
+      '無任何提醒'
+    ],
+    correct: 1,
+    explanation: {
+      title: '計數器會用顏色變化提醒藥量即將用完。',
+      points: [
+        '剩餘劑量小於10時，<strong>計數器左半邊會顯示紅色</strong>',
+        '建議提醒病人提早掛號回診領藥，避免臨時斷藥',
+        '計數器顯示為「0」時，即使搖晃機身聽到粉末聲，<strong>也無法再釋出有效藥物，須丟棄換新</strong>'
+      ]
+    }
+  },
+  {
+    type: 'multi',
+    title: '下列哪些是病人使用吸入器時的常見錯誤？',
+    instruction: '本題為多選，請選出所有正確答案後按下「提交答案」。',
+    options: [
+      '朝吸嘴吐氣',
+      '手指擋住通氣孔',
+      '吸氣太猛太急促',
+      '使用完畢後用乾面紙擦拭吸口'
+    ],
+    correct: [0, 1, 2],
+    explanation: {
+      title: '常見錯誤集中在吐氣方式、手勢遮蔽與吸氣力道三方面。',
+      points: [
+        '<strong>朝吸嘴吐氣</strong>：會讓藥粉受潮結塊吸不出，應轉頭吐完氣再含住吸口',
+        '<strong>手指擋住通氣孔</strong>：會阻擋氣流，無法帶出藥粉，手指應改握機身左右兩側',
+        '<strong>吸氣太猛太急促</strong>：藥粉會高速撞擊卡在喉嚨，應改用平穩深長的方式吸氣',
+        '使用乾面紙擦拭吸口是<strong>正確保養方式</strong>，並非錯誤'
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '關於潤娃易利達的保存與用藥原則，下列何者正確？',
+    instruction: '',
+    options: [
+      '可放入冰箱冷藏保存',
+      '若忘記使用可在隔日補雙倍劑量',
+      '存放於30°C以下室溫乾燥處，忘記使用應盡快補吸但不可雙倍劑量',
+      '使用後可用濕紙巾擦拭機身'
+    ],
+    correct: 2,
+    explanation: {
+      title: '吸入器最怕潮濕，保存與補吸都有明確原則。',
+      points: [
+        '應存放在<strong>30°C以下室溫、乾燥陰涼處</strong>，不可冷藏或冷凍',
+        '使用完畢後<strong>僅可用乾面紙擦拭吸口</strong>，絕對不可用濕紙巾或水沖洗',
+        '若忘記使用應<strong>盡快補吸</strong>，但<strong>不可在隔日使用雙倍劑量</strong>'
+      ]
+    }
+  }
+];
+
+/* ===================== 狀態 ===================== */
+let currentIndex = 0;
+let score = 0;
+let multiSelected = [];
+let startTime = 0;
+let elapsedSeconds = 0;
+let timerInterval = null;
+
+/* ===================== 檢視切換 ===================== */
+function showView(id){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ===================== 計時器 ===================== */
+function startTimer(){
+  startTime = Date.now();
+  elapsedSeconds = 0;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    const t = document.getElementById('timer');
+    if (t) t.textContent = formatTime(elapsedSeconds);
+  }, 1000);
+}
+function stopTimer(){ clearInterval(timerInterval); }
+function formatTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return `${m}:${sec}`;
+}
+
+/* ===================== 開始 / 重新挑戰 ===================== */
+function startQuiz(){
+  currentIndex = 0;
+  score = 0;
+  showView('quiz-body');
+  startTimer();
+  renderDots();
+  renderQuestion();
+}
+function restartQuiz(){
+  showView('quiz-intro');
+}
+
+/* ===================== 進度點 / 進度條 ===================== */
+function renderDots(){
+  const dotsEl = document.getElementById('dots');
+  dotsEl.innerHTML = '';
+  quizData.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = 'dot-' + i;
+    dotsEl.appendChild(d);
+  });
+  updateDots();
+}
+function updateDots(){
+  quizData.forEach((_, i) => {
+    const d = document.getElementById('dot-' + i);
+    d.classList.remove('done','current');
+    if (i < currentIndex) d.classList.add('done');
+    else if (i === currentIndex) d.classList.add('current');
+  });
+  document.getElementById('progress-bar').style.width =
+    Math.round((currentIndex / quizData.length) * 100) + '%';
+}
+
+/* ===================== 渲染題目 ===================== */
+function renderQuestion(){
+  const q = quizData[currentIndex];
+  const total = quizData.length;
+  document.getElementById('progress-text').textContent = `Question ${currentIndex+1} / ${total}`;
+  updateDots();
+
+  const container = document.getElementById('quiz-content');
+  const letters = ['A','B','C','D','E','F'];
+
+  let optionsHtml = '';
+  q.options.forEach((opt, i) => {
+    if (q.type === 'single'){
+      optionsHtml += `
+        <button class="option-btn" onclick="selectSingle(${i})" id="opt-${i}">
+          <span class="option-prefix">${letters[i]}</span>${opt}
+        </button>`;
+    } else {
+      optionsHtml += `
+        <button class="option-btn" onclick="toggleMulti(${i})" id="opt-${i}">
+          <span class="option-prefix">${letters[i]}</span>${opt}
+        </button>`;
+    }
+  });
+
+  let submitHtml = '';
+  if (q.type === 'multi'){
+    submitHtml = `<button class="submit-multi-btn" id="submit-multi" onclick="submitMulti()">提交答案</button>`;
+  }
+
+  container.innerHTML = `
+    <div class="q-card">
+      <div class="q-title serif">${q.title}</div>
+      ${q.instruction ? `<div class="q-instruction">${q.instruction}</div>` : ''}
+      ${optionsHtml}
+      ${submitHtml}
+    </div>
+    <div id="feedback-slot"></div>
+  `;
+
+  multiSelected = [];
+}
+
+/* ===================== 單選判分 ===================== */
+function selectSingle(i){
+  const q = quizData[currentIndex];
+  const isCorrect = (i === q.correct);
+
+  document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+    btn.classList.add('disabled');
+    btn.onclick = null;
+    if (idx === q.correct) btn.classList.add('correct');
+    if (idx === i && !isCorrect) btn.classList.add('wrong');
+  });
+
+  if (isCorrect) score++;
+  renderFeedback(isCorrect);
+}
+
+/* ===================== 多選判分 ===================== */
+function toggleMulti(i){
+  const btn = document.getElementById('opt-' + i);
+  const pos = multiSelected.indexOf(i);
+  if (pos === -1){
+    multiSelected.push(i);
+    btn.classList.add('selected');
+  } else {
+    multiSelected.splice(pos, 1);
+    btn.classList.remove('selected');
+  }
+}
+function submitMulti(){
+  const q = quizData[currentIndex];
+  const correctSet = [...q.correct].sort().join(',');
+  const selectedSet = [...multiSelected].sort().join(',');
+  const isCorrect = (correctSet === selectedSet);
+
+  document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+    btn.classList.add('disabled');
+    btn.onclick = null;
+    btn.classList.remove('selected');
+    if (q.correct.includes(idx)) btn.classList.add('correct');
+    else if (multiSelected.includes(idx)) btn.classList.add('wrong');
+  });
+
+  const submitBtn = document.getElementById('submit-multi');
+  if (submitBtn) submitBtn.remove();
+
+  if (isCorrect) score++;
+  renderFeedback(isCorrect);
+}
+
+/* ===================== 回饋卡片 ===================== */
+function renderFeedback(isCorrect){
+  const q = quizData[currentIndex];
+  const isLast = (currentIndex === quizData.length - 1);
+  const slot = document.getElementById('feedback-slot');
+
+  const pointsHtml = q.explanation.points.map(p => `<li>${p}</li>`).join('');
+
+  slot.innerHTML = `
+    <div class="feedback ${isCorrect ? 'success' : 'error'}">
+      <div class="fb-head">
+        <div class="fb-icon">${isCorrect ? '✓' : '✕'}</div>
+        <div class="fb-title">${isCorrect ? '答對了！' : '再複習一下！'}</div>
+      </div>
+      <div class="fb-summary">${q.explanation.title}</div>
+      <ul class="fb-points">${pointsHtml}</ul>
+      <button class="btn-next" onclick="${isLast ? 'finishQuiz()' : 'nextQuestion()'}">
+        ${isLast ? '查看結果' : '下一題'}
+      </button>
+    </div>
+  `;
+}
+
+/* ===================== 下一題 / 結束 ===================== */
+function nextQuestion(){
+  currentIndex++;
+  renderQuestion();
+}
+
+function finishQuiz(){
+  stopTimer();
+  showView('quiz-finish');
+  document.getElementById('final-time').textContent = formatTime(elapsedSeconds);
+
+  const total = quizData.length;
+  animateScore(score, total);
+
+  const commentEl = document.getElementById('final-comment');
+  if (score === total){
+    commentEl.textContent = '滿分！您已掌握每一個關鍵環節。';
+  } else if (score >= Math.ceil(total * 2/3)){
+    commentEl.textContent = '不錯的表現，再複習一次錯題就更完整了。';
+  } else {
+    commentEl.textContent = '建議回到學習平台複習教材後，再來挑戰。';
+  }
+}
+
+function animateScore(target, total){
+  const el = document.getElementById('final-score');
+  if (target === 0){
+    el.textContent = '0';
+    return;
+  }
+  let current = 0;
+  const interval = setInterval(() => {
+    current++;
+    el.textContent = current;
+    if (current >= target){
+      clearInterval(interval);
+    }
+  }, 180);
+}
+</script>
+
+</body>
+</html>
