@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【RELVAR ELLIPTA 潤娃易利達】重點整理：比對中</title>
+<style>
+  body {
+    margin: 0;
+    background: #FAF8F4;
+    color: #1F3A33;
+    font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    padding: 32px 20px;
+  }
+  .quiz-wrap { max-width: 880px; margin: 0 auto; }
+  .page-title {
+    font-size: 22px; font-weight: 700; margin: 0 0 6px;
+    color: #1F3A33; line-height: 1.6; text-align: center;
+  }
+  .subtitle { font-size: 14px; color: #5C6B66; text-align: center; margin: 0 0 4px; }
+  .progress { font-size: 13px; color: #5C6B66; margin: 0 0 4px; font-weight: 500; text-align: center; }
+  .timer { font-size: 13px; color: #5C6B66; margin: 0 0 20px; font-weight: 500; text-align: center; }
+  .timer .timer-value { font-weight: 700; color: #1F3A33; }
+  .quiz-card {
+    background: #FFFFFF; border: 1px solid #E7E2D8;
+    border-radius: 16px; padding: 24px;
+  }
+  .board {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 12px; align-items: stretch;
+  }
+  @media (max-width: 640px) { .board { grid-template-columns: repeat(2, 1fr); } }
+  .match-card {
+    border: 1.5px solid #E7E2D8; background: #FFFFFF;
+    border-radius: 10px; padding: 14px 12px; cursor: pointer;
+    font-size: 13px; line-height: 1.6; color: #1F3A33;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; min-height: 88px;
+    transition: border-color 0.15s ease, transform 0.1s ease, background 0.15s ease;
+    user-select: none;
+  }
+  .match-card.title-card { font-weight: 700; font-size: 14px; background: #FAF8F4; }
+  .match-card:hover:not(.matched):not(.disabled) { border-color: #D97B4F; transform: translateY(-2px); }
+  .match-card.selected { border-color: #5C8AA6; background: #EAF1F5; }
+  .match-card.matched {
+    border-color: #5B8C6B; background: #EBF4EC;
+    color: #3A6B47; opacity: 0.45; cursor: default;
+  }
+  .match-card.wrong {
+    border-color: #D97B4F !important; background: #FBEAE1 !important;
+    color: #B8542A !important; animation: shake 0.3s ease;
+  }
+  .match-card.wrong::after {
+    content: "✗"; display: block; font-size: 18px;
+    font-weight: 700; margin-top: 4px; color: #D97B4F;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+  .next-btn {
+    font-family: inherit; border: 1px solid #1F3A33;
+    background: #1F3A33; color: #fff; padding: 10px 28px;
+    border-radius: 8px; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s ease;
+  }
+  .next-btn:hover { background: #D97B4F; border-color: #D97B4F; }
+  .result-banner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 14px 18px; border-radius: 10px;
+    font-size: 14px; font-weight: 700;
+    background: #EBF4EC; color: #3A6B47; margin-top: 24px;
+  }
+  .finish-banner { text-align: center; padding: 40px 20px; }
+  .finish-banner .big { font-size: 20px; font-weight: 700; color: #1F3A33; margin-bottom: 8px; }
+  .finish-banner .small { font-size: 14px; color: #5C6B66; margin-bottom: 16px; }
+  .finish-banner .total-time {
+    font-size: 16px; font-weight: 700; color: #1F3A33;
+    background: #EBF4EC; display: inline-block;
+    padding: 10px 24px; border-radius: 10px; margin-bottom: 8px;
+  }
+  .back-link {
+    display: inline-block; margin-top: 24px; font-size: 14px;
+    font-weight: 700; color: #5C8AA6; text-decoration: none;
+    border-bottom: 1px solid #5C8AA6; padding-bottom: 2px;
+  }
+  .back-link:hover { color: #D97B4F; border-bottom-color: #D97B4F; }
+</style>
+</head>
+<body>
+<div class="quiz-wrap">
+  <div class="quiz-card">
+    <div id="quiz-root"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var pages = [
+    {
+      title: "【RELVAR ELLIPTA 潤娃易利達】重點整理：比對中",
+      subtitle: "請點選兩張卡片，將標題與對應的說明文配對",
+      pairs: [
+        { title: "主要成分", desc: "fluticasone furoate（ICS）與vilanterol（LABA），具抗發炎及支氣管擴張作用。" },
+        { title: "Relvar Ellipta", desc: "一種長效乾粉吸入劑，適用於COPD及18歲以上氣喘患者，每日一次使用。" },
+        { title: "劑量計數器", desc: "顯示剩餘劑量，初始為30，每次開蓋自動減1，小於10時顯示紅色，0時需丟棄。" },
+        { title: "正確吸入五步驟", desc: "開蓋、吐氣、吸藥、閉氣、關蓋漱口，確保藥效發揮並預防副作用。" }
+      ]
+    },
+    {
+      title: "【RELVAR ELLIPTA 潤娃易利達】重點整理：比對中",
+      subtitle: "請點選兩張卡片，將標題與對應的說明文配對",
+      pairs: [
+        { title: "使用禁忌", desc: "嚴重乳蛋白過敏者不得使用，因吸入劑中含有乳糖賦形劑。" },
+        { title: "給藥頻率限制", desc: "每24小時不可使用超過1次，症狀未緩解也不可自行增加劑量或使用次數。" },
+        { title: "使用限制", desc: "不適用於緩解急性支氣管痙攣，須另外準備短效型β2作用劑作為救援藥物。" },
+        { title: "漱口目的", desc: "吸入後立即用水漱口並吐出、不可吞下，用以降低發生口咽念珠菌病的風險。" }
+      ]
+    },
+    {
+      title: "【RELVAR ELLIPTA 潤娃易利達】重點整理：比對中",
+      subtitle: "請點選兩張卡片，將標題與對應的說明文配對",
+      pairs: [
+        { title: "肺炎風險族群", desc: "COPD患者中，目前仍在抽菸、高齡、身體質量指數偏低、重度COPD者風險較高。" },
+        { title: "反常性支氣管痙攣", desc: "投藥後若呼吸反而更喘，應立即使用短效支氣管擴張劑並停用本藥。" },
+        { title: "藥物交互作用", desc: "與ketoconazole等強效CYP3A4抑制劑併用須謹慎，可能增加全身性類固醇作用。" },
+        { title: "骨質密度影響", desc: "長期使用可能使骨質密度降低，建議COPD患者於治療前後評估骨密度狀況。" }
+      ]
+    }
+  ];
+
+  /* ---- 以下程式碼不需修改 ---- */
+  var pageIndex = 0;
+  var cards = [];
+  var selected = [];
+  var lock = false;
+  var matchedCount = 0;
+  var timerSeconds = 0;
+  var timerInterval = null;
+  var timerRunning = false;
+
+  function formatTime(s){
+    var m = Math.floor(s/60), sec = s%60;
+    return (m<10?"0":"")+m+":"+(sec<10?"0":"")+sec;
+  }
+
+  function startTimer(){
+    if(timerRunning) return;
+    timerRunning = true;
+    timerInterval = setInterval(function(){
+      timerSeconds++;
+      var el = document.getElementById("timer-value");
+      if(el) el.textContent = formatTime(timerSeconds);
+    }, 1000);
+  }
+
+  function stopTimer(){
+    timerRunning = false;
+    if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for(var i=a.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1)), tmp=a[i]; a[i]=a[j]; a[j]=tmp;
+    }
+    return a;
+  }
+
+  function initPage(){
+    var page = pages[pageIndex], raw = [];
+    page.pairs.forEach(function(p,i){
+      raw.push({id:"t"+i, pairId:i, type:"title", label:p.title, matched:false});
+      raw.push({id:"d"+i, pairId:i, type:"desc",  label:p.desc,  matched:false});
+    });
+    cards = shuffle(raw);
+    selected = []; lock = false; matchedCount = 0;
+    render();
+    startTimer();
+  }
+
+  function selectCard(id){
+    if(lock) return;
+    var card = null;
+    for(var i=0;i<cards.length;i++){ if(cards[i].id===id){card=cards[i];break;} }
+    if(!card||card.matched) return;
+    if(selected.indexOf(id)!==-1||selected.length>=2) return;
+    selected.push(id);
+    render();
+    if(selected.length===2){
+      lock = true;
+      var c1=null, c2=null;
+      for(var j=0;j<cards.length;j++){
+        if(cards[j].id===selected[0]) c1=cards[j];
+        if(cards[j].id===selected[1]) c2=cards[j];
+      }
+      if(c1.pairId===c2.pairId && c1.type!==c2.type){
+        setTimeout(function(){
+          c1.matched=true; c2.matched=true; matchedCount+=2;
+          selected=[]; lock=false; render();
+        }, 350);
+      } else {
+        render(true);
+        setTimeout(function(){ selected=[]; lock=false; render(); }, 700);
+      }
+    }
+  }
+
+  function nextPage(){
+    if(pageIndex<pages.length-1){ pageIndex++; initPage(); }
+    else { stopTimer(); renderFinish(); }
+  }
+
+  function renderFinish(){
+    document.getElementById("quiz-root").innerHTML =
+      '<div class="finish-banner">' +
+        '<div class="big">✓ 全部練習完成！</div>' +
+        '<div class="small">您已完成【RELVAR ELLIPTA 潤娃易利達】相關練習。</div>' +
+        '<div class="total-time">總耗時：' + formatTime(timerSeconds) + '</div><br>' +
+        '<a class="back-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning">回藥劑部學習平台</a>' +
+      '</div>';
+  }
+
+  function render(showWrong){
+    var root = document.getElementById("quiz-root");
+    var page = pages[pageIndex];
+    var allMatched = matchedCount===cards.length;
+    var boardHtml = cards.map(function(c){
+      var cls = "match-card" + (c.type==="title"?" title-card":"");
+      if(c.matched) cls+=" matched";
+      else if(selected.indexOf(c.id)!==-1) cls+=showWrong?" wrong":" selected";
+      var click = !c.matched ? ' onclick="window.__match.selectCard(\''+c.id+'\')"' : "";
+      return '<div class="'+cls+'"'+click+'>'+c.label+'</div>';
+    }).join("");
+    var footer = allMatched
+      ? '<div class="result-banner"><span>✓ 全部配對成功！</span>' +
+        '<button class="next-btn" onclick="window.__match.nextPage()">' +
+        (pageIndex===pages.length-1?"完成":"下一頁") + '</button></div>'
+      : "";
+    root.innerHTML =
+      '<h2 class="page-title">'+page.title+'</h2>' +
+      '<p class="subtitle">'+page.subtitle+'</p>' +
+      '<p class="progress">第 '+(pageIndex+1)+' / '+pages.length+' 頁　｜　已配對 '+(matchedCount/2)+' / '+page.pairs.length+' 組</p>' +
+      '<p class="timer">已花費時間：<span class="timer-value" id="timer-value">'+formatTime(timerSeconds)+'</span></p>' +
+      '<div class="board">'+boardHtml+'</div>' + footer;
+  }
+
+  window.__match = { selectCard:selectCard, nextPage:nextPage };
+  initPage();
+})();
+</script>
+</body></html>
