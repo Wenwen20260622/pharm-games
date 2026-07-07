@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>可化凝（Warfarin） 自我檢核測驗</title>
+<meta name="description" content="可化凝（Warfarin）衛教與安全用藥自我檢核測驗，含 18 道題目與即時回饋。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #f5f2ec;
+    --paper-light: #faf8f3;
+    --moss: #2d5f4f;
+    --moss-deep: #1d4438;
+    --moss-light: #4a8073;
+    --amber: #d4823c;
+    --amber-deep: #b66922;
+    --amber-light: #f0c285;
+    --rose: #b33a3a;
+    --gray-line: #d9d4ca;
+    --gray-soft: #ece8df;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .font-serif-tc { font-family: 'Noto Serif TC', serif; }
+  .font-display { font-family: 'Playfair Display', 'Noto Serif TC', serif; }
+  .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+  .paper-bg {
+    background-image: radial-gradient(circle at 1px 1px, rgba(45,95,79,0.04) 1px, transparent 0);
+    background-size: 18px 18px;
+  }
+
+  .view { display: none; animation: fadeIn 0.5s ease; }
+  .view.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .btn-primary {
+    background: var(--moss-deep);
+    color: var(--paper);
+    padding: 14px 32px;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    font-size: 15px;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .btn-primary:hover { background: var(--ink); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    padding: 14px 32px;
+    border-radius: 4px;
+    font-weight: 500;
+    border: 1px solid var(--gray-line);
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-ghost:hover { border-color: var(--moss); color: var(--moss-deep); }
+
+  .quiz-option {
+    background: var(--paper-light);
+    border: 1.5px solid var(--gray-line);
+    padding: 18px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .quiz-option:hover:not(.disabled) {
+    border-color: var(--moss);
+    background: #fff;
+    transform: translateX(4px);
+  }
+  .quiz-option.selected { border-color: var(--moss-deep); background: rgba(45,95,79,0.06); }
+  .quiz-option.correct { border-color: var(--moss); background: rgba(45,95,79,0.08); }
+  .quiz-option.wrong { border-color: var(--rose); background: rgba(179,58,58,0.06); opacity: 0.85; }
+  .quiz-option.disabled { cursor: default; }
+  .quiz-option .option-letter {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.5px solid var(--gray-line);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--ink);
+    flex-shrink: 0;
+    font-size: 15px;
+  }
+  .quiz-option.correct .option-letter { background: var(--moss); color: var(--paper); border-color: var(--moss); }
+  .quiz-option.wrong .option-letter { background: var(--rose); color: var(--paper); border-color: var(--rose); }
+
+  .progress-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--gray-line);
+    transition: all 0.3s;
+  }
+  .progress-dot.active { background: var(--moss-deep); transform: scale(1.3); }
+  .progress-dot.done { background: var(--moss-light); }
+
+  .feedback {
+    margin-top: 24px;
+    padding: 20px 24px;
+    border-radius: 4px;
+    border-left: 4px solid;
+    animation: slideUp 0.4s ease;
+  }
+  .feedback.success { background: rgba(45,95,79,0.06); border-color: var(--moss); }
+  .feedback.error { background: rgba(179,58,58,0.05); border-color: var(--rose); }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--moss-deep);
+    letter-spacing: 0.12em;
+    font-size: 13px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .return-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 28px;
+    background: var(--paper-light);
+    border: 1.5px solid var(--moss);
+    border-radius: 6px;
+    color: var(--moss-deep);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.25s;
+  }
+  .return-link:hover {
+    background: var(--moss-deep);
+    color: var(--paper);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -8px rgba(29,68,56,0.4);
+  }
+  .return-link svg { transition: transform 0.25s; }
+  .return-link:hover svg { transform: translateX(-2px); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="sticky top-0 z-50 backdrop-blur" style="background: rgba(245,242,236,0.92); border-bottom: 1px solid var(--gray-line);">
+  <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <circle cx="16" cy="16" r="14" stroke="#2d5f4f" stroke-width="1.5"/>
+        <circle cx="16" cy="16" r="6" fill="#d4823c"/>
+        <line x1="16" y1="2" x2="16" y2="6" stroke="#2d5f4f" stroke-width="1.5"/>
+        <line x1="16" y1="26" x2="16" y2="30" stroke="#2d5f4f" stroke-width="1.5"/>
+      </svg>
+      <div>
+        <div class="font-serif-tc font-bold text-base leading-tight" style="color: var(--ink);">可化凝（Warfarin）</div>
+        <div class="text-xs" style="color: var(--moss-deep); letter-spacing: 0.05em;">自我檢核測驗</div>
+      </div>
+    </div>
+    <a href="https://pha.lib.cmuh.org.tw/p/PHlearning" class="text-sm hidden md:flex items-center gap-2" style="color: #666;" target="_blank" rel="noopener">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/></svg>
+      藥劑部學習平台
+    </a>
+  </div>
+</header>
+
+<!-- INTRO -->
+<section class="max-w-3xl mx-auto px-6 py-16 paper-bg view active" id="quiz-intro">
+  <div class="text-center">
+    <div class="eyebrow mb-4">Knowledge Check</div>
+    <h1 class="font-serif-tc font-bold text-4xl md:text-5xl mb-6" style="color: var(--ink);">可化凝（Warfarin）<br/>自我檢核測驗</h1>
+    <p class="text-base md:text-lg leading-relaxed mb-12" style="color: #444; max-width: 480px; margin: 0 auto;">
+      共 <strong>18 道題目</strong>，涵蓋藥理機轉、出血風險辨識、飲食與藥物交互作用、特殊族群、手術前後處理與過量逆轉。每題作答後會立即顯示正確答案與重點複習。
+    </p>
+    <div class="grid grid-cols-3 gap-4 max-w-md mx-auto mb-12">
+      <div class="p-4 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="font-display font-bold text-2xl" style="color: var(--moss-deep);">18</div>
+        <div class="text-xs mt-1" style="color: #666;">道題目</div>
+      </div>
+      <div class="p-4 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="font-display font-bold text-2xl" style="color: var(--moss-deep);">∞</div>
+        <div class="text-xs mt-1" style="color: #666;">可重試</div>
+      </div>
+      <div class="p-4 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="font-display font-bold text-2xl" style="color: var(--moss-deep);">8min</div>
+        <div class="text-xs mt-1" style="color: #666;">預估時間</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startQuiz()">
+      開始挑戰
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</section>
+
+<!-- QUIZ BODY -->
+<section class="max-w-3xl mx-auto px-6 py-12 view" id="quiz-body">
+  <div class="flex items-center justify-between mb-3">
+    <div class="text-sm" style="color: #666;">
+      Question <span class="font-display font-bold text-base" style="color: var(--ink);" id="q-current">1</span>
+      <span style="color: #aaa;"> / 18</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <div class="font-mono text-sm" style="color: var(--moss-deep);" id="timer">00:00</div>
+      <div class="flex items-center gap-2" id="progress-dots"></div>
+    </div>
+  </div>
+  <div class="w-full rounded-full h-1" style="background: var(--gray-soft);">
+    <div class="h-1 rounded-full transition-all duration-500" style="background: var(--moss-deep); width: 0%;" id="progress-bar"></div>
+  </div>
+  <div id="quiz-content" class="mt-10"></div>
+</section>
+
+<!-- FINISH -->
+<section class="max-w-3xl mx-auto px-6 py-16 view" id="quiz-finish">
+  <div class="text-center">
+    <div class="mx-auto mb-8" style="width: 110px; height: 110px;">
+      <svg viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="56" fill="#2d5f4f"/>
+        <circle cx="60" cy="60" r="56" stroke="#d4823c" stroke-width="2" stroke-dasharray="4 6"/>
+        <path d="M40 60 L54 74 L82 46" stroke="#f5f2ec" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="eyebrow mb-3" style="color: var(--amber-deep);">Mission Complete</div>
+    <h2 class="font-serif-tc font-bold text-4xl md:text-5xl mb-8" style="color: var(--ink);">恭喜你完成挑戰</h2>
+
+    <!-- Score & Time stats -->
+    <div class="grid grid-cols-2 gap-4 max-w-md mx-auto mb-4">
+      <div class="p-6 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="text-xs mb-2" style="color: #666;">本次得分</div>
+        <div class="font-display font-bold" style="font-size: 44px; color: var(--moss-deep); line-height: 1;">
+          <span id="final-score">0</span><span style="font-size: 20px; color: #aaa;"> / 18</span>
+        </div>
+      </div>
+      <div class="p-6 rounded" style="background: var(--paper-light); border: 1px solid var(--gray-line);">
+        <div class="text-xs mb-2" style="color: #666;">總耗時</div>
+        <div class="font-mono font-bold" style="font-size: 36px; color: var(--moss-deep); line-height: 1.2;" id="final-time">00:00</div>
+      </div>
+    </div>
+    <p class="text-sm mb-12" id="score-comment" style="color: #666;"></p>
+
+    <!-- Return link to learning platform -->
+    <div class="mb-10">
+      <a href="https://pha.lib.cmuh.org.tw/p/PHlearning" class="return-link" target="_blank" rel="noopener">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        回藥劑部學習平台
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+      </a>
+    </div>
+
+    <div class="flex flex-wrap gap-3 justify-center">
+      <button class="btn-primary" onclick="restartQuiz()">
+        重新挑戰
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+<footer class="py-10 mt-12" style="background: var(--paper); border-top: 1px solid var(--gray-line);">
+  <div class="max-w-3xl mx-auto px-6 text-center text-xs" style="color: #888;">
+    本測驗僅供教育訓練，非正式醫療指引。實際操作請依醫囑與藥品仿單為準。
+  </div>
+</footer>
+
+<script>
+const quizData = [
+  {
+    type: 'single',
+    title: '第 1 題：藥理機轉',
+    instruction: '可化凝（Warfarin）主要是透過抑制哪一類凝血因子達到抗凝血效果？',
+    chapter: '藥理機轉',
+    options: ['鈣離子依賴型凝血因子', '鐵依賴型凝血因子', '維生素K依賴型凝血因子', '胺基酸依賴型凝血因子'],
+    correct: 2,
+    explanation: {
+      title: '答案是維生素K依賴型凝血因子',
+      points: [
+        'Warfarin抑制<strong>維生素K依賴型凝血因子</strong>（II、VII、IX、X）的活化',
+        '可減少肝臟製造的活性凝血因子總量約<strong>30%~50%</strong>',
+        '抗凝血效果於24小時內出現，但最高效果可能延遲72~96小時',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 2 題：重要副作用',
+    instruction: 'Warfarin治療時，最常見且最嚴重的副作用是什麼？',
+    chapter: '出血警語',
+    options: ['腹瀉', '出血', '皮膚搔癢', '頭痛'],
+    correct: 1,
+    explanation: {
+      title: '答案是出血',
+      points: [
+        'Warfarin會造成<strong>大出血或致命性出血</strong>，是最需要警惕的風險',
+        '出血比較可能發生在<strong>剛開始治療期間</strong>，以及使用高劑量期間',
+        '即使INR在治療範圍內，仍可能發生出血，任何異常都要通報',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 3 題：出血高危險因子',
+    instruction: '下列哪一項不是Warfarin出血高危險因子？',
+    chapter: '出血警語',
+    options: ['年齡小於30歲', 'INR>4.0', '長期治療', '腎功能不全'],
+    correct: 0,
+    explanation: {
+      title: '答案是「年齡小於30歲」',
+      points: [
+        '出血高危險因子包括<strong>INR>4.0</strong>、<strong>年紀≥65歲</strong>、INR變化很大',
+        '胃腸出血病史、高血壓、腦血管疾病、嚴重心臟病、貧血、惡性腫瘤',
+        '腎功能不足、長期Warfarin治療等，都會提高出血風險',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 4 題：飲食衛教原則',
+    instruction: '服用Warfarin期間，關於維生素K食物的正確衛教原則為？',
+    chapter: '飲食交互作用',
+    options: ['完全禁止食用', '只在服藥當天食用', '大量食用', '定量食用，避免劇變'],
+    correct: 3,
+    explanation: {
+      title: '答案是「定量食用，避免劇變」',
+      points: [
+        '原則是<strong>定量食用，不是完全禁止</strong>',
+        '應避免飲食習慣劇變，例如突然大量食用綠色蔬菜',
+        '維持穩定的維生素K攝取量，才能讓INR保持穩定',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 5 題：亞洲人劑量原則',
+    instruction: '亞洲人（含華人）服用Warfarin時，劑量調整的建議為？',
+    chapter: '劑量原則',
+    options: ['起始及維持劑量均較低', '劑量與西方人相同', '只需高劑量', '可自行調整劑量'],
+    correct: 0,
+    explanation: {
+      title: '答案是「起始及維持劑量均較低」',
+      points: [
+        '多數華人帶有<strong>VKORC1 AA基因型</strong>，會降低Warfarin的代謝',
+        '建議起始治療劑量從<strong>較低劑量</strong>開始使用',
+        '劑量須依個別病人的PT/INR反應調整，不可自行增減',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 6 題：INR目標值',
+    instruction: 'Warfarin治療時，INR目標範圍多為多少？',
+    chapter: '監測指標',
+    options: ['3.5~5.0', '2.0~3.0', '4.0~6.0', '1.0~2.0'],
+    correct: 1,
+    explanation: {
+      title: '答案是2.0~3.0',
+      points: [
+        '多數適應症的INR目標範圍為<strong>2.0~3.0</strong>',
+        '機械瓣膜置換病人依瓣膜類型與位置，可能建議更高的INR目標',
+        'INR值高於4.0通常無法提供額外治療效益，反而增加出血風險',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 7 題：加強抗凝血作用的食物',
+    instruction: '下列哪一項食物或保健品會加強Warfarin抗凝血作用？',
+    chapter: '飲食交互作用',
+    options: ['高麗菜', '納豆', '蔓越莓', '綠茶'],
+    correct: 2,
+    explanation: {
+      title: '答案是蔓越莓',
+      points: [
+        '高麗菜、納豆、綠茶都含<strong>維生素K</strong>，會降低抗凝血作用',
+        '蔓越莓（及鳳梨酵素、魚油、大蒜、洋蔥、銀杏等）則會<strong>加強</strong>抗凝血作用',
+        '應告知病人若這些食物是正常飲食的一部分，應告知醫師',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 8 題：定期監測指標',
+    instruction: 'Warfarin治療期間，病人應定期回診測哪一項指標？',
+    chapter: '監測指標',
+    options: ['血糖', 'PT/INR', '血壓', '尿酸'],
+    correct: 1,
+    explanation: {
+      title: '答案是PT/INR',
+      points: [
+        '<strong>PT/INR</strong>是監測Warfarin抗凝血效果最重要的指標',
+        '須依醫師指示定期追蹤，並依測量值調整劑量',
+        '穩定用法用量後，通常以1至4週間隔測量即可',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 9 題：需立即就醫的症狀',
+    instruction: '服用Warfarin期間，若出現下列哪一症狀需立即就醫？',
+    chapter: '出血警語',
+    options: ['輕微口渴', '短暫疲倦', '紅色或暗褐色尿', '輕微頭暈'],
+    correct: 2,
+    explanation: {
+      title: '答案是紅色或暗褐色尿',
+      points: [
+        '紅色或暗褐色尿可能是<strong>血尿</strong>的表徵，屬於出血警訊',
+        '出血徵象還包括不尋常瘀青、黑便、牙齦出血、月經量增加等',
+        '出現任何不尋常出血或症狀時應立即通報醫師',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 10 題：禁忌症判斷',
+    instruction: '下列哪一項不是Warfarin的禁忌症？',
+    chapter: '禁忌症',
+    options: ['懷孕', '活動性潰瘍', '高血糖', '新近接受腦部手術'],
+    correct: 2,
+    explanation: {
+      title: '答案是高血糖',
+      points: [
+        'Warfarin禁用於<strong>懷孕</strong>或可能懷孕的婦女，因藥物可通過胎盤造成胎兒出血或畸形',
+        '<strong>活動性潰瘍</strong>與<strong>新近接受中樞神經系統手術</strong>都屬於出血風險過高的禁忌情況',
+        '高血糖本身並不是Warfarin的禁忌症',
+      ]
+    }
+  },
+  {
+    type: 'multi',
+    title: '第 11 題：藥物交互作用（複選）',
+    instruction: 'Warfarin與下列哪一類藥物併用時，需特別注意出血風險？（可複選）',
+    chapter: '藥物交互作用',
+    options: ['Aspirin', '抗組織胺藥', '降血糖藥', '非類固醇抗炎藥（NSAID）'],
+    correct: [0, 3],
+    explanation: {
+      title: '答案是Aspirin、非類固醇抗炎藥（NSAID）',
+      points: [
+        'Aspirin與<strong>NSAID</strong>都可能引起胃腸出血、消化性潰瘍或穿孔',
+        '這兩類藥物也可能改變PT/INR值，併用時須審慎評估是否需調整劑量',
+        '抗組織胺藥與降血糖藥並非此類高出血風險的併用藥物',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 12 題：特殊族群監測',
+    instruction: 'Warfarin治療時，哪一種族群需更頻繁監測PT/INR？',
+    chapter: '特殊族群',
+    options: ['孕婦', '健康成年人', '無腎功能障礙者', '兒童'],
+    correct: 3,
+    explanation: {
+      title: '答案是兒童',
+      points: [
+        '兒童使用本品時劑量需求可能隨生長改變，較難獲得與維持PT/INR治療範圍',
+        '因此需要<strong>更頻繁</strong>地測定PT/INR值',
+        '孕婦則是完全<strong>禁用</strong>本品，並非監測頻率的問題',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 13 題：手術期間處理',
+    instruction: 'Warfarin治療期間，若需進行牙科或外科手術，應如何處理？',
+    chapter: '手術與處置',
+    options: ['繼續服藥', '術前測PT/INR並與醫師討論是否調整劑量', '自行停藥', '術後再補服藥'],
+    correct: 1,
+    explanation: {
+      title: '答案是術前測PT/INR並與醫師討論是否調整劑量',
+      points: [
+        '手術前須進行<strong>PT/INR值測量</strong>',
+        '需要臨床醫師與外科醫師、牙醫師密切配合，決定是否調整劑量或暫停用藥',
+        '不可自行停藥或自行決定繼續服藥，須由醫師評估風險效益',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 14 題：紫色足趾症候群',
+    instruction: 'Warfarin治療時，若出現紫色足趾症候群，應如何處理？',
+    chapter: '併發症處理',
+    options: ['繼續服藥', '只需觀察', '自行調整劑量', '立即停藥並就醫'],
+    correct: 3,
+    explanation: {
+      title: '答案是立即停藥並就醫',
+      points: [
+        '紫色足趾症候群是Warfarin治療的嚴重併發症之一',
+        '以腳趾呈<strong>暗紫色或斑駁色彩</strong>為特徵，通常發生於治療的3至10週內或更晚',
+        '有些病例可能惡化至壞疽或壞死，一旦懷疑發生應立即停藥並就醫評估',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 15 題：衛教五要點',
+    instruction: '下列哪一項不是Warfarin治療的衛教五要點？',
+    chapter: '衛教SOP',
+    options: ['均衡定量飲食', '定期回診測INR', '自行增減劑量', '固定時間服藥'],
+    correct: 2,
+    explanation: {
+      title: '答案是「自行增減劑量」',
+      points: [
+        '衛教五要點包括：<strong>固定時間服藥、定期回診測INR、均衡定量飲食</strong>',
+        '以及留意出血/栓塞徵象、告知所有醫療人員（牙科、外科手術前或新增用藥時）',
+        '絕對不可自行增減劑量或停藥，這正是衛教要避免的行為',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 16 題：與肝素轉換',
+    instruction: 'Warfarin治療時，若需與肝素交替使用，正確做法為？',
+    chapter: '藥物轉換',
+    options: ['肝素停用後立即開始Warfarin', '只用肝素，不用Warfarin', '兩者不可同時使用', '肝素與Warfarin重疊4~5天，達到治療反應後停肝素'],
+    correct: 3,
+    explanation: {
+      title: '答案是肝素與Warfarin重疊4~5天，達到治療反應後停肝素',
+      points: [
+        '因Warfarin的抗凝血效果較慢，最初較適合使用肝素獲得快速抗凝血效果',
+        '轉換時建議<strong>重疊使用4至5天</strong>，直到PT/INR達到治療反應',
+        '當達到理想的PT/INR值時，才可停用肝素',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 17 題：過量逆轉',
+    instruction: 'Warfarin治療時，若需快速逆轉過度抗凝血作用，應使用哪一種物質？',
+    chapter: '過量處理',
+    options: ['鈣片', '維生素K1', '維生素C', '鐵劑'],
+    correct: 1,
+    explanation: {
+      title: '答案是維生素K1',
+      points: [
+        '過度抗凝血作用可藉停藥控制，如有需要可口服或注射<strong>維生素K1</strong>',
+        '嚴重出血的緊急情況，可能需要輸血或凝血因子製劑',
+        '使用維生素K1可能降低隨後對Warfarin的治療反應，需小心調整劑量',
+      ]
+    }
+  },
+  {
+    type: 'single',
+    title: '第 18 題：中草藥併用',
+    instruction: '服用Warfarin期間，若需服用中草藥，正確衛教原則為？',
+    chapter: '藥物交互作用',
+    options: ['可自行服用', '務必告知醫師或藥師', '完全不需注意', '只需告知家人'],
+    correct: 1,
+    explanation: {
+      title: '答案是務必告知醫師或藥師',
+      points: [
+        '中草藥製程缺乏標準化，其中有效成分之含量可能不同',
+        '與Warfarin併用風險難以預測，服用前<strong>務必主動告知醫師或藥師</strong>',
+        '銀杏、大蒜、當歸、丹參、人參等都可能影響Warfarin的抗凝血作用',
+      ]
+    }
+  }
+];
+
+let currentQ = 0;
+let answers = [];
+let score = 0;
+let multiSelections = [];
+let startTime = null;
+let timerInterval = null;
+let elapsedSeconds = 0;
+
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function formatTime(s) {
+  const m = Math.floor(s / 60).toString().padStart(2, '0');
+  const sec = (s % 60).toString().padStart(2, '0');
+  return `${m}:${sec}`;
+}
+
+function startTimer() {
+  startTime = Date.now();
+  elapsedSeconds = 0;
+  timerInterval = setInterval(() => {
+    elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('timer').textContent = formatTime(elapsedSeconds);
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+function startQuiz() {
+  currentQ = 0;
+  answers = [];
+  score = 0;
+  multiSelections = [];
+  showView('quiz-body');
+  renderProgressDots();
+  renderQuestion();
+  startTimer();
+}
+
+function restartQuiz() {
+  showView('quiz-intro');
+}
+
+function renderProgressDots() {
+  const dots = document.getElementById('progress-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < quizData.length; i++) {
+    const d = document.createElement('div');
+    d.className = 'progress-dot';
+    if (i < currentQ) d.classList.add('done');
+    if (i === currentQ) d.classList.add('active');
+    dots.appendChild(d);
+  }
+  document.getElementById('progress-bar').style.width = `${(currentQ / quizData.length) * 100}%`;
+  document.getElementById('q-current').textContent = currentQ + 1;
+}
+
+function renderQuestion() {
+  const q = quizData[currentQ];
+  const isMulti = q.type === 'multi';
+  const c = document.getElementById('quiz-content');
+
+  let html = `
+    <div class="mb-2 eyebrow">${q.chapter}</div>
+    <h2 class="font-serif-tc font-bold text-2xl md:text-3xl mb-3">${q.title}</h2>
+    <p class="text-base mb-8" style="color: #555;">${q.instruction}</p>
+    <div class="space-y-3" id="options-wrap">
+  `;
+
+  q.options.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    html += `
+      <button class="quiz-option" data-idx="${i}" onclick="${isMulti ? `toggleMulti(${i})` : `selectSingle(${i})`}">
+        <div class="option-letter">${letter}</div>
+        <div class="flex-1" style="padding-top: 4px;">${opt}</div>
+      </button>
+    `;
+  });
+
+  html += `</div>`;
+
+  if (isMulti) {
+    html += `
+      <div class="mt-6 flex justify-end">
+        <button class="btn-primary" id="submit-multi" onclick="submitMulti()">提交答案
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    `;
+  }
+
+  html += `<div id="feedback-slot"></div>`;
+  c.innerHTML = html;
+}
+
+function toggleMulti(i) {
+  const btn = document.querySelector(`#options-wrap [data-idx="${i}"]`);
+  if (btn.classList.contains('disabled')) return;
+  const idx = multiSelections.indexOf(i);
+  if (idx >= 0) {
+    multiSelections.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else {
+    multiSelections.push(i);
+    btn.classList.add('selected');
+  }
+}
+
+function submitMulti() {
+  const q = quizData[currentQ];
+  const correctSet = new Set(q.correct);
+  const userSet = new Set(multiSelections);
+
+  document.querySelectorAll('#options-wrap .quiz-option').forEach((btn) => {
+    btn.classList.add('disabled');
+    const i = parseInt(btn.dataset.idx);
+    if (correctSet.has(i) && userSet.has(i)) btn.classList.add('correct');
+    else if (correctSet.has(i) && !userSet.has(i)) btn.classList.add('correct');
+    else if (!correctSet.has(i) && userSet.has(i)) btn.classList.add('wrong');
+  });
+
+  document.getElementById('submit-multi').remove();
+
+  const isPerfect = correctSet.size === userSet.size && [...correctSet].every(x => userSet.has(x));
+  answers.push(isPerfect);
+  if (isPerfect) score++;
+  multiSelections = [];
+
+  showFeedback(isPerfect);
+}
+
+function selectSingle(i) {
+  const q = quizData[currentQ];
+  const isCorrect = i === q.correct;
+  answers.push(isCorrect);
+  if (isCorrect) score++;
+
+  document.querySelectorAll('#options-wrap .quiz-option').forEach((btn) => {
+    btn.classList.add('disabled');
+    const idx = parseInt(btn.dataset.idx);
+    if (idx === q.correct) btn.classList.add('correct');
+    if (idx === i && i !== q.correct) btn.classList.add('wrong');
+    btn.onclick = null;
+  });
+
+  showFeedback(isCorrect);
+}
+
+function showFeedback(isCorrect) {
+  const q = quizData[currentQ];
+  const slot = document.getElementById('feedback-slot');
+  const isLast = currentQ === quizData.length - 1;
+  const points = q.explanation.points.map(p => `<li class="flex gap-3 items-start mb-2"><span style="color: var(--moss-deep); font-weight: bold; flex-shrink: 0;">·</span><span>${p}</span></li>`).join('');
+
+  slot.innerHTML = `
+    <div class="feedback ${isCorrect ? 'success' : 'error'}">
+      <div class="flex items-center gap-3 mb-3">
+        ${isCorrect
+          ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d5f4f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+             <div class="font-serif-tc font-bold text-lg" style="color: var(--moss-deep);">答對了！</div>`
+          : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b33a3a" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+             <div class="font-serif-tc font-bold text-lg" style="color: var(--rose);">再複習一下！</div>`
+        }
+      </div>
+      <div class="font-medium mb-3" style="color: var(--ink);">${q.explanation.title}</div>
+      <ul class="text-sm" style="color: #444; line-height: 1.7;">${points}</ul>
+    </div>
+    <div class="mt-6 flex justify-end">
+      <button class="btn-primary" onclick="${isLast ? 'finishQuiz()' : 'nextQuestion()'}">
+        ${isLast ? '查看結果' : '下一題'}
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+  `;
+}
+
+function nextQuestion() {
+  currentQ++;
+  renderProgressDots();
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function finishQuiz() {
+  stopTimer();
+  showView('quiz-finish');
+
+  // Animate score
+  const finalEl = document.getElementById('final-score');
+  let n = 0;
+  const target = score;
+  if (target === 0) {
+    finalEl.textContent = '0';
+  } else {
+    const interval = setInterval(() => {
+      n++;
+      finalEl.textContent = n;
+      if (n >= target) clearInterval(interval);
+    }, 180);
+  }
+
+  // Show total time
+  document.getElementById('final-time').textContent = formatTime(elapsedSeconds);
+
+  // Comment
+  const commentEl = document.getElementById('score-comment');
+  if (score === quizData.length) commentEl.textContent = '滿分！您已掌握每一個關鍵環節。';
+  else if (score >= Math.ceil(quizData.length * 2 / 3)) commentEl.textContent = '不錯的表現，再複習一次錯題就更完整了。';
+  else commentEl.textContent = '建議回到學習平台複習教材後，再來挑戰。';
+}
+</script>
+
+</body>
+</html>
