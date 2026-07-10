@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>可化凝（Warfarin）用藥安全練習</title>
+<style>
+  body {
+    margin: 0;
+    background: #FAF8F4;
+    color: #1F3A33;
+    font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    padding: 32px 20px;
+  }
+  .quiz-wrap { max-width: 720px; margin: 0 auto; }
+  .page-title {
+    font-size: 22px; font-weight: 700; margin: 0 0 20px;
+    color: #1F3A33; line-height: 1.6; text-align: center;
+  }
+  .progress {
+    font-size: 13px; color: #5C6B66; margin: 0 0 4px;
+    font-weight: 500; text-align: center;
+  }
+  .timer {
+    font-size: 13px; color: #5C6B66; margin: 0 0 16px;
+    font-weight: 500; text-align: center; letter-spacing: 0.5px;
+  }
+  .timer-final { font-size: 16px; font-weight: 700; color: #1F3A33; margin: 4px 0 0; }
+  .quiz-card {
+    background: #FFFFFF; border: 1px solid #E7E2D8;
+    border-radius: 16px; padding: 28px 28px 24px;
+  }
+  .sentence { font-size: 16px; line-height: 2.6; margin: 0 0 6px; color: #1F3A33; }
+  .blank {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 90px; height: 32px; padding: 0 12px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    vertical-align: middle; margin: 0 4px; transition: background 0.15s ease;
+  }
+  .blank-empty  { border: 1.5px dashed #C9C2B4; background: #FAF8F4; color: #A8A096; }
+  .blank-filled { border: 1.5px solid #5C8AA6; background: #EAF1F5; color: #2D5670; }
+  .blank-correct{ border: 1.5px solid #5B8C6B; background: #EBF4EC; color: #3A6B47; }
+  .blank-wrong  { border: 1.5px solid #D97B4F; background: #FBEAE1; color: #B8542A; }
+  .options-row {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 28px; padding-top: 24px; border-top: 1px solid #E7E2D8;
+  }
+  .option-btn {
+    font-family: inherit; border: 1px solid #E7E2D8; background: #FFFFFF;
+    color: #1F3A33; padding: 8px 16px; border-radius: 8px;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.1s ease;
+  }
+  .option-btn:hover:not(:disabled) { border-color: #D97B4F; transform: translateY(-1px); }
+  .option-btn:disabled { cursor: default; }
+  .footer-row { margin-top: 24px; }
+  .check-btn {
+    font-family: inherit; display: block; margin-left: auto;
+    border: 1px solid #1F3A33; background: #1F3A33; color: #fff;
+    padding: 10px 28px; border-radius: 8px; font-size: 14px;
+    font-weight: 700; cursor: pointer; transition: background 0.15s ease;
+  }
+  .check-btn:hover:not(:disabled) { background: #D97B4F; border-color: #D97B4F; }
+  .check-btn:disabled { background: #C9C2B4; border-color: #C9C2B4; cursor: default; }
+  .result-banner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 14px 18px; border-radius: 10px; font-size: 14px; font-weight: 700;
+  }
+  .result-success { background: #EBF4EC; color: #3A6B47; }
+  .result-danger  { background: #FBEAE1; color: #B8542A; }
+  .retry-btn {
+    font-family: inherit; flex-shrink: 0; border: 1px solid #D97B4F;
+    background: #fff; color: #D97B4F; padding: 8px 18px;
+    border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .retry-btn:hover { background: #D97B4F; color: #fff; }
+  .finish-banner { text-align: center; padding: 40px 20px; }
+  .finish-banner .big { font-size: 20px; font-weight: 700; color: #1F3A33; margin-bottom: 8px; }
+  .finish-banner .small { font-size: 14px; color: #5C6B66; }
+  .back-link {
+    display: inline-block; margin-top: 24px; font-size: 14px;
+    font-weight: 700; color: #5C8AA6; text-decoration: none;
+    border-bottom: 1px solid #5C8AA6; padding-bottom: 2px;
+  }
+  .back-link:hover { color: #D97B4F; border-bottom-color: #D97B4F; }
+</style>
+</head>
+<body>
+<div class="quiz-wrap">
+  <div class="quiz-card">
+    <div id="quiz-root"><p class="progress">載入中...</p></div>
+  </div>
+</div>
+<script>
+(function(){
+  const pages = [
+    {
+      title: "藥物認識與作用機轉",
+      groups: [
+        {
+          segments: [
+            "可化凝（Warfarin）是一種常見的抗凝血藥物，主要透過抑制",
+            "GAP",
+            "依賴型凝血因子的活化來達到抗凝血效果，減少肝臟製造的活性凝血因子總量約30%~50%。治療時需特別注意劑量調整，多數病人每日劑量",
+            "GAP",
+            "，並依",
+            "GAP",
+            "調整，治療範圍極窄，INR目標多為2.0~3.0，可依錠劑刻痕分成半錠彈性調整。抗凝血效果於投藥後",
+            "GAP",
+            "內出現，最高效果可能延遲72~96小時。多數華人帶有VKORC1 AA基因型，代謝較",
+            "GAP",
+            "，起始劑量宜",
+            "GAP",
+            "。"
+          ],
+          answers: ["維生素K", "2~10mg", "INR值", "24小時", "慢", "低"]
+        }
+      ],
+      distractors: ["維生素C", "20~30mg", "0.5~1mg", "高", "正常", "72小時", "5小時", "快"]
+    },
+    {
+      title: "出血高危險群與警示症狀",
+      groups: [
+        {
+          segments: [
+            "出血高危險族群包括INR>",
+            "GAP",
+            "、年齡≧",
+            "GAP",
+            "、腸胃出血病史、高血壓、腎功能不全、同時使用影響凝血藥物。出現傷口流血不止、月經量增加或陰道出血、牙齦或流鼻血、刷牙時齒齦出血等症狀時，應立即就醫。栓塞症狀如四肢嚴重疼痛、腫脹或紅腫、胸痛、呼吸困難、",
+            "GAP",
+            "改變或喪失也需特別留意。"
+          ],
+          answers: ["4.0", "65歲", "視覺"]
+        }
+      ],
+      distractors: ["18歲", "40歲", "1.0", "2.0", "味覺", "聽覺"]
+    },
+    {
+      title: "飲食與中草藥交互作用",
+      groups: [
+        {
+          segments: [
+            "服用本品併用其他中藥或西藥前，務必告知醫師或藥師。食物與保健品建議「固定份量」，避免飲食習慣劇變，忘記服藥時當天儘早補服，切勿隔日加倍服用。所有warfarin sodium製劑成分相同，不可重複併用。若近期有",
+            "GAP",
+            "或外科手術，須提前告知醫療人員是否需暫停服用。"
+          ],
+          answers: ["牙科"]
+        },
+        {
+          segments: [
+            "可能會「降低」可化凝藥效的食物或補充劑包括：大量富含",
+            "GAP",
+            "的",
+            "GAP",
+            "蔬菜（如菠菜、綠花椰、高麗菜等）、輔酶Q10、貫葉連翹（St. John's wort）、諾麗果汁；可能會「增加」可化凝藥效的包括：鳳梨酵素、蔓越莓、大量",
+            "GAP",
+            "、魚油（每日超過2克）、",
+            "GAP",
+            "（> 400 IU/天）及中藥",
+            "GAP",
+            "、當歸、丹參等。"
+          ],
+          answers: ["維生素K", "深綠色", "酒精", "維他命E", "銀杏"]
+        }
+      ],
+      distractors: ["耳鼻喉科", "眼科", "紅色", "白色", "維他命D", "維生素A", "水"]
+    },
+    {
+      title: "用藥五要點與自我監測",
+      groups: [
+        {
+          segments: [
+            "病人衛教五要點包括：固定",
+            "GAP",
+            "、",
+            "GAP",
+            "服藥，同一時間服用，不可自行增減劑量或停藥。定期回診測",
+            "GAP",
+            "，依醫師指示追蹤PT/INR，調整劑量以策安全。均衡定量飲食，留意出血或栓塞徵象，如有異常出血或神經症狀，應立即就醫或聯絡藥師。告知所有醫療人員，牙科、外科手術前，或新增用藥時務必主動告知。"
+          ],
+          answers: ["時間", "規律", "INR"]
+        }
+      ],
+      distractors: ["地點", "血壓", "隨心", "血糖", "日期"]
+    }
+  ];
+
+  let pageIndex = 0, options = [], filled = {}, checked = false;
+  let elapsedSeconds = 0, timerInterval = null;
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+  function formatTime(s){
+    return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  }
+  function startTimer(){
+    if(timerInterval) return;
+    timerInterval=setInterval(()=>{
+      elapsedSeconds++;
+      const el=document.getElementById('quiz-timer');
+      if(el) el.textContent='已花費時間：'+formatTime(elapsedSeconds);
+    },1000);
+  }
+  function stopTimer(){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+  }
+  function getFlatBlanks(page){
+    const flat=[];
+    page.groups.forEach(g=>g.answers.forEach(ans=>flat.push({answer:ans})));
+    return flat;
+  }
+  function initPage(){
+    const page=pages[pageIndex];
+    const flat=getFlatBlanks(page);
+    options=shuffle(flat.map(b=>b.answer).concat(page.distractors));
+    filled={}; checked=false;
+    render(); startTimer();
+  }
+  function selectOption(opt){
+    if(checked) return;
+    const flat=getFlatBlanks(pages[pageIndex]);
+    if(Object.values(filled).includes(opt)) return;
+    const idx=flat.findIndex((b,i)=>!filled[i]);
+    if(idx===-1) return;
+    filled[idx]=opt; render();
+  }
+  function clearBlank(idx){ if(checked) return; delete filled[idx]; render(); }
+  function checkAnswers(){ checked=true; render(); }
+  function retryPage(){ initPage(); }
+  function nextPage(){
+    if(pageIndex<pages.length-1){ pageIndex++; initPage(); }
+    else { renderFinish(); }
+  }
+  function renderFinish(){
+    stopTimer();
+    document.getElementById('quiz-root').innerHTML=`
+      <div class="finish-banner">
+        <div class="big">✓ 全部練習完成！</div>
+        <div class="small">您已完成 可化凝（Warfarin）用藥安全 相關練習。</div>
+        <div class="timer-final">總耗時：${formatTime(elapsedSeconds)}</div>
+        <a class="back-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning">回藥劑部學習平台</a>
+      </div>`;
+  }
+  function render(){
+    const page=pages[pageIndex];
+    const flat=getFlatBlanks(page);
+    const allFilled=flat.every((b,i)=>filled[i]);
+    const used=new Set(Object.values(filled));
+    let gi=0;
+    const groupsHtml=page.groups.map(g=>{
+      let html='<p class="sentence">';
+      g.segments.forEach(seg=>{
+        if(seg==='GAP'){
+          const i=gi, info=flat[i], val=filled[i];
+          let cls='blank ', content='&nbsp;';
+          if(!val) cls+='blank-empty';
+          else if(!checked){ cls+='blank-filled'; content=val; }
+          else{
+            const ok=val===info.answer;
+            cls+=ok?'blank-correct':'blank-wrong';
+            content=val+(ok?' ✓':' ✗');
+          }
+          const click=!checked?`onclick="window.__quiz.clearBlank(${i})"`:'';
+          html+=`<span class="${cls}" ${click}>${content}</span>`;
+          gi++;
+        } else { html+=seg; }
+      });
+      return html+'</p>';
+    }).join('');
+    const optionsHtml=options.map(opt=>{
+      const isUsed=used.has(opt);
+      return `<button class="option-btn"
+        onclick="window.__quiz.selectOption('${opt.replace(/'/g,"\\'")}')"
+        ${isUsed||checked?'disabled':''}
+        style="opacity:${isUsed?0.35:1};">${opt}</button>`;
+    }).join('');
+    let footer='';
+    if(checked){
+      const allOk=flat.every((b,i)=>filled[i]===b.answer);
+      const isLast=pageIndex===pages.length-1;
+      footer=allOk
+        ?`<div class="result-banner result-success"><span>✓ 所有答案都正確！非常好！</span><button class="retry-btn" onclick="window.__quiz.nextPage()">${isLast?'完成':'下一頁'}</button></div>`
+        :`<div class="result-banner result-danger"><span>✗ 有答案不正確，請再試一次</span><button class="retry-btn" onclick="window.__quiz.retryPage()">重新作答</button></div>`;
+    } else {
+      footer=`<button class="check-btn" onclick="window.__quiz.checkAnswers()" ${!allFilled?'disabled':''}>檢查</button>`;
+    }
+    document.getElementById('quiz-root').innerHTML=`
+      <h2 class="page-title">${page.title}</h2>
+      <p class="progress">第 ${pageIndex+1} / ${pages.length} 頁</p>
+      <p class="timer" id="quiz-timer">已花費時間：${formatTime(elapsedSeconds)}</p>
+      <div>${groupsHtml}</div>
+      <div class="options-row">${optionsHtml}</div>
+      <div class="footer-row">${footer}</div>`;
+  }
+  window.__quiz={selectOption,clearBlank,checkAnswers,retryPage,nextPage};
+  initPage();
+})();
+</script>
+</body></html>
