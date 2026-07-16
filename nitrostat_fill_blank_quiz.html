@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0014)about:internet -->
-<html lang="zh-Hant"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="zh-Hant"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nitrostat 用藥安全練習</title>
 <style>
@@ -12,256 +10,85 @@
     font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
     padding: 32px 20px;
   }
-
-  .quiz-wrap {
-    max-width: 720px;
-    margin: 0 auto;
-  }
-
+  .quiz-wrap { max-width: 720px; margin: 0 auto; }
   .page-title {
-    font-size: 22px;
-    font-weight: 700;
-    margin: 0 0 20px;
-    color: #1F3A33;
-    line-height: 1.6;
-    text-align: center;
+    font-size: 22px; font-weight: 700; margin: 0 0 20px;
+    color: #1F3A33; line-height: 1.6; text-align: center;
   }
-
   .progress {
-    font-size: 13px;
-    color: #5C6B66;
-    margin: 0 0 4px;
-    font-weight: 500;
-    text-align: center;
+    font-size: 13px; color: #5C6B66; margin: 0 0 4px;
+    font-weight: 500; text-align: center;
   }
-
   .timer {
-    font-size: 13px;
-    color: #5C6B66;
-    margin: 0 0 16px;
-    font-weight: 500;
-    text-align: center;
-    letter-spacing: 0.5px;
+    font-size: 13px; color: #5C6B66; margin: 0 0 16px;
+    font-weight: 500; text-align: center; letter-spacing: 0.5px;
   }
-
-  .timer-final {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1F3A33;
-    margin: 4px 0 0;
-  }
-
+  .timer-final { font-size: 16px; font-weight: 700; color: #1F3A33; margin: 4px 0 0; }
   .quiz-card {
-    background: #FFFFFF;
-    border: 1px solid #E7E2D8;
-    border-radius: 16px;
-    padding: 28px 28px 24px;
+    background: #FFFFFF; border: 1px solid #E7E2D8;
+    border-radius: 16px; padding: 28px 28px 24px;
   }
-
-  .sentence {
-    font-size: 16px;
-    line-height: 2.6;
-    margin: 0 0 6px;
-    color: #1F3A33;
-  }
-
+  .sentence { font-size: 16px; line-height: 2.6; margin: 0 0 6px; color: #1F3A33; }
   .blank {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 90px;
-    height: 32px;
-    padding: 0 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    vertical-align: middle;
-    margin: 0 4px;
-    transition: background 0.15s ease;
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 90px; height: 32px; padding: 0 12px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    vertical-align: middle; margin: 0 4px; transition: background 0.15s ease;
   }
-
-  .blank-empty {
-    border: 1.5px dashed #C9C2B4;
-    background: #FAF8F4;
-    color: #A8A096;
-  }
-
-  .blank-filled {
-    border: 1.5px solid #5C8AA6;
-    background: #EAF1F5;
-    color: #2D5670;
-  }
-
-  .blank-correct {
-    border: 1.5px solid #5B8C6B;
-    background: #EBF4EC;
-    color: #3A6B47;
-  }
-
-  .blank-wrong {
-    border: 1.5px solid #D97B4F;
-    background: #FBEAE1;
-    color: #B8542A;
-  }
-
+  .blank-empty  { border: 1.5px dashed #C9C2B4; background: #FAF8F4; color: #A8A096; }
+  .blank-filled { border: 1.5px solid #5C8AA6; background: #EAF1F5; color: #2D5670; }
+  .blank-correct{ border: 1.5px solid #5B8C6B; background: #EBF4EC; color: #3A6B47; }
+  .blank-wrong  { border: 1.5px solid #D97B4F; background: #FBEAE1; color: #B8542A; }
   .options-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 28px;
-    padding-top: 24px;
-    border-top: 1px solid #E7E2D8;
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 28px; padding-top: 24px; border-top: 1px solid #E7E2D8;
   }
-
   .option-btn {
-    font-family: inherit;
-    border: 1px solid #E7E2D8;
-    background: #FFFFFF;
-    color: #1F3A33;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
+    font-family: inherit; border: 1px solid #E7E2D8; background: #FFFFFF;
+    color: #1F3A33; padding: 8px 16px; border-radius: 8px;
+    font-size: 14px; font-weight: 500; cursor: pointer;
     transition: border-color 0.15s ease, transform 0.1s ease;
   }
-
-  .option-btn:hover:not(:disabled) {
-    border-color: #D97B4F;
-    transform: translateY(-1px);
-  }
-
-  .option-btn:disabled {
-    cursor: default;
-  }
-
-  .footer-row {
-    margin-top: 24px;
-  }
-
+  .option-btn:hover:not(:disabled) { border-color: #D97B4F; transform: translateY(-1px); }
+  .option-btn:disabled { cursor: default; }
+  .footer-row { margin-top: 24px; }
   .check-btn {
-    font-family: inherit;
-    display: block;
-    margin-left: auto;
-    border: 1px solid #1F3A33;
-    background: #1F3A33;
-    color: #fff;
-    padding: 10px 28px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.15s ease;
+    font-family: inherit; display: block; margin-left: auto;
+    border: 1px solid #1F3A33; background: #1F3A33; color: #fff;
+    padding: 10px 28px; border-radius: 8px; font-size: 14px;
+    font-weight: 700; cursor: pointer; transition: background 0.15s ease;
   }
-
-  .check-btn:hover:not(:disabled) {
-    background: #D97B4F;
-    border-color: #D97B4F;
-  }
-
-  .check-btn:disabled {
-    background: #C9C2B4;
-    border-color: #C9C2B4;
-    cursor: default;
-  }
-
+  .check-btn:hover:not(:disabled) { background: #D97B4F; border-color: #D97B4F; }
+  .check-btn:disabled { background: #C9C2B4; border-color: #C9C2B4; cursor: default; }
   .result-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 14px 18px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 700;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 14px 18px; border-radius: 10px; font-size: 14px; font-weight: 700;
   }
-
-  .result-success {
-    background: #EBF4EC;
-    color: #3A6B47;
-  }
-
-  .result-danger {
-    background: #FBEAE1;
-    color: #B8542A;
-  }
-
+  .result-success { background: #EBF4EC; color: #3A6B47; }
+  .result-danger  { background: #FBEAE1; color: #B8542A; }
   .retry-btn {
-    font-family: inherit;
-    flex-shrink: 0;
-    border: 1px solid #D97B4F;
-    background: #fff;
-    color: #D97B4F;
-    padding: 8px 18px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
+    font-family: inherit; flex-shrink: 0; border: 1px solid #D97B4F;
+    background: #fff; color: #D97B4F; padding: 8px 18px;
+    border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;
   }
-
-  .retry-btn:hover {
-    background: #D97B4F;
-    color: #fff;
-  }
-
-  .finish-banner {
-    text-align: center;
-    padding: 40px 20px;
-  }
-
-  .finish-banner .big {
-    font-size: 20px;
-    font-weight: 700;
-    color: #1F3A33;
-    margin-bottom: 8px;
-  }
-
-  .finish-banner .small {
-    font-size: 14px;
-    color: #5C6B66;
-  }
-
+  .retry-btn:hover { background: #D97B4F; color: #fff; }
+  .finish-banner { text-align: center; padding: 40px 20px; }
+  .finish-banner .big { font-size: 20px; font-weight: 700; color: #1F3A33; margin-bottom: 8px; }
+  .finish-banner .small { font-size: 14px; color: #5C6B66; }
   .back-link {
-    display: inline-block;
-    margin-top: 24px;
-    font-size: 14px;
-    font-weight: 700;
-    color: #5C8AA6;
-    text-decoration: none;
-    border-bottom: 1px solid #5C8AA6;
-    padding-bottom: 2px;
+    display: inline-block; margin-top: 24px; font-size: 14px;
+    font-weight: 700; color: #5C8AA6; text-decoration: none;
+    border-bottom: 1px solid #5C8AA6; padding-bottom: 2px;
   }
-
-  .back-link:hover {
-    color: #D97B4F;
-    border-bottom-color: #D97B4F;
-  }
-
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0,0,0,0);
-  }
+  .back-link:hover { color: #D97B4F; border-bottom-color: #D97B4F; }
 </style>
 </head>
 <body>
-
 <div class="quiz-wrap">
   <div class="quiz-card">
-    <div id="quiz-root">
-      <h2 class="page-title">Nitrostat 功能與正確使用方式</h2>
-      <p class="progress">第 1 / 2 頁</p>
-      <p class="timer" id="quiz-timer">已花費時間：00:00</p>
-      <div><p class="sentence">Nitrostat 舌下錠的主要成分是<span class="blank blank-empty" onclick="window.__quiz.clearBlank(0)">&nbsp;</span>，常用於預防或緩解心絞痛。</p><p class="sentence">當急性胸痛發作時，應將藥錠含於<span class="blank blank-empty" onclick="window.__quiz.clearBlank(1)">&nbsp;</span>，不可嚼碎或整粒吞服。</p><p class="sentence">舌下含藥時建議坐下，以免因血壓下降發生<span class="blank blank-empty" onclick="window.__quiz.clearBlank(2)">&nbsp;</span>。</p><p class="sentence">若症狀未緩解，可每隔五分鐘重複使用一粒，但總共不超過<span class="blank blank-empty" onclick="window.__quiz.clearBlank(3)">&nbsp;</span>。</p><p class="sentence">若在十五分鐘內已使用三粒仍無效，應立即<span class="blank blank-empty" onclick="window.__quiz.clearBlank(4)">&nbsp;</span>。</p></div>
-      <div class="options-row"><button class="option-btn" onclick="window.__quiz.selectOption(&#39;三次&#39;)" style="opacity:1;">三次</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;就醫&#39;)" style="opacity:1;">就醫</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;舌下&#39;)" style="opacity:1;">舌下</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;口腔&#39;)" style="opacity:1;">口腔</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;阿司匹林&#39;)" style="opacity:1;">阿司匹林</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;喝水&#39;)" style="opacity:1;">喝水</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;硝酸甘油&#39;)" style="opacity:1;">硝酸甘油</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;五次&#39;)" style="opacity:1;">五次</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;暈眩&#39;)" style="opacity:1;">暈眩</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;發燒&#39;)" style="opacity:1;">發燒</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;手心&#39;)" style="opacity:1;">手心</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;一次&#39;)" style="opacity:1;">一次</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;休息&#39;)" style="opacity:1;">休息</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;咳嗽&#39;)" style="opacity:1;">咳嗽</button><button class="option-btn" onclick="window.__quiz.selectOption(&#39;普拿疼&#39;)" style="opacity:1;">普拿疼</button></div>
-      <div class="footer-row"><button class="check-btn" onclick="window.__quiz.checkAnswers()" disabled="">檢查</button></div>
-    </div>
+    <div id="quiz-root"><p class="progress">載入中...</p></div>
   </div>
 </div>
-
 <script>
 (function(){
   const pages = [
@@ -274,7 +101,7 @@
         {segments: ["若症狀未緩解，可每隔五分鐘重複使用一粒，但總共不超過", "GAP", "。"], answers: ["三次"]},
         {segments: ["若在十五分鐘內已使用三粒仍無效，應立即就醫。"], answers: []}
       ],
-      distractors: ["咳嗽","硝酸甘油","阿司匹林","發燒","手心","口腔","三次","五次","暈眩","一次","普拿疼","舌下","喝水","坐下","站立"]
+      distractors: ["咳嗽", "阿司匹林", "發燒", "手心", "口腔", "五次", "一次", "普拿疼", "喝水", "站立"]
     },
     {
       title: "Nitrostat 保存與服用注意事項",
@@ -292,203 +119,125 @@
           answers: []
         }
       ],
-      distractors: ["搖晃","鬆脫","隨意","照光","打開","加熱","拴緊","原玻璃容器","夾鏈袋","分裝藥盒","頭痛","愉悅"]
+      distractors: ["搖晃", "鬆脫", "隨意", "打開", "加熱", "夾鏈袋", "分裝藥盒", "愉悅"]
     }
   ];
 
-  let pageIndex = 0;
-  let options = [];
-  let filled = {};
-  let checked = false;
-  let elapsedSeconds = 0;
-  let timerInterval = null;
+  let pageIndex = 0, options = [], filled = {}, checked = false;
+  let elapsedSeconds = 0, timerInterval = null;
 
   function shuffle(arr){
     const a = arr.slice();
     for(let i=a.length-1;i>0;i--){
-      const j = Math.floor(Math.random()*(i+1));
-      [a[i],a[j]] = [a[j],a[i]];
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
     }
     return a;
   }
-
-  function formatTime(totalSeconds){
-    const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-    const s = (totalSeconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+  function formatTime(s){
+    return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
   }
-
   function startTimer(){
-    if(timerInterval) return; // 已經在跑了，不重複啟動
-    timerInterval = setInterval(() => {
+    if(timerInterval) return;
+    timerInterval=setInterval(()=>{
       elapsedSeconds++;
-      const el = document.getElementById('quiz-timer');
-      if(el) el.textContent = `已花費時間：${formatTime(elapsedSeconds)}`;
-    }, 1000);
+      const el=document.getElementById('quiz-timer');
+      if(el) el.textContent='已花費時間：'+formatTime(elapsedSeconds);
+    },1000);
   }
-
   function stopTimer(){
-    if(timerInterval){
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
+    if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
   }
-
-  function initPage(){
-    const page = pages[pageIndex];
-    const flatBlanks = getFlatBlanks(page);
-    options = shuffle(flatBlanks.map(b=>b.answer).concat(page.distractors));
-    filled = {};
-    checked = false;
-    render();
-    startTimer();
-  }
-
   function getFlatBlanks(page){
-    // 把所有 group 裡的答案展平成一個全域列表，每個空格記錄所屬 group
-    const flat = [];
-    page.groups.forEach((g, gi) => {
-      g.answers.forEach((ans, ai) => {
-        flat.push({ groupIndex: gi, answerIndexInGroup: ai, answer: ans });
-      });
-    });
+    const flat=[];
+    page.groups.forEach(g=>g.answers.forEach(ans=>flat.push({answer:ans})));
     return flat;
   }
-
+  function initPage(){
+    const page=pages[pageIndex];
+    const flat=getFlatBlanks(page);
+    options=shuffle(flat.map(b=>b.answer).concat(page.distractors));
+    filled={}; checked=false;
+    render(); startTimer();
+  }
   function selectOption(opt){
     if(checked) return;
-    const page = pages[pageIndex];
-    const flatBlanks = getFlatBlanks(page);
+    const flat=getFlatBlanks(pages[pageIndex]);
     if(Object.values(filled).includes(opt)) return;
-    const emptyIdx = flatBlanks.findIndex((b, i) => !filled[i]);
-    if(emptyIdx === -1) return;
-    filled[emptyIdx] = opt;
-    render();
+    const idx=flat.findIndex((b,i)=>!filled[i]);
+    if(idx===-1) return;
+    filled[idx]=opt; render();
   }
-
-  function clearBlank(idx){
-    if(checked) return;
-    delete filled[idx];
-    render();
-  }
-
-  function checkAnswers(){
-    checked = true;
-    render();
-  }
-
-  function retryPage(){
-    initPage();
-  }
-
+  function clearBlank(idx){ if(checked) return; delete filled[idx]; render(); }
+  function checkAnswers(){ checked=true; render(); }
+  function retryPage(){ initPage(); }
   function nextPage(){
-    if(pageIndex < pages.length - 1){
-      pageIndex++;
-      initPage();
-    } else {
-      renderFinish();
-    }
+    if(pageIndex<pages.length-1){ pageIndex++; initPage(); }
+    else { renderFinish(); }
   }
-
   function renderFinish(){
     stopTimer();
-    const root = document.getElementById('quiz-root');
-    root.innerHTML = `
+    document.getElementById('quiz-root').innerHTML=`
       <div class="finish-banner">
         <div class="big">✓ 全部練習完成！</div>
         <div class="small">您已完成 Nitrostat 用藥安全相關練習。</div>
         <div class="timer-final">總耗時：${formatTime(elapsedSeconds)}</div>
         <a class="back-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning">回藥劑部學習平台</a>
-      </div>
-    `;
+      </div>`;
   }
-
   function render(){
-    const root = document.getElementById('quiz-root');
-    const page = pages[pageIndex];
-    const flatBlanks = getFlatBlanks(page);
-    const allFilled = flatBlanks.every((b,i)=>filled[i]);
-    const usedOptions = new Set(Object.values(filled));
-
-    let blankGlobalIndex = 0;
-
-    let groupsHtml = page.groups.map((g) => {
-      let html = `<p class="sentence">`;
-      g.segments.forEach(seg => {
-        if(seg === "GAP"){
-          const i = blankGlobalIndex;
-          const blankInfo = flatBlanks[i];
-          const val = filled[i];
-          let cls = "blank ";
-          let content = "&nbsp;";
-
-          if(!val){
-            cls += "blank-empty";
-          } else if(!checked){
-            cls += "blank-filled";
-            content = val;
-          } else {
-            const isCorrect = val === blankInfo.answer;
-            cls += isCorrect ? "blank-correct" : "blank-wrong";
-            content = val + (isCorrect ? " ✓" : " ✗");
+    const page=pages[pageIndex];
+    const flat=getFlatBlanks(page);
+    const allFilled=flat.every((b,i)=>filled[i]);
+    const used=new Set(Object.values(filled));
+    let gi=0;
+    const groupsHtml=page.groups.map(g=>{
+      let html='<p class="sentence">';
+      g.segments.forEach(seg=>{
+        if(seg==='GAP'){
+          const i=gi, info=flat[i], val=filled[i];
+          let cls='blank ', content='&nbsp;';
+          if(!val) cls+='blank-empty';
+          else if(!checked){ cls+='blank-filled'; content=val; }
+          else{
+            const ok=val===info.answer;
+            cls+=ok?'blank-correct':'blank-wrong';
+            content=val+(ok?' ✓':' ✗');
           }
-
-          const clickAttr = !checked ? `onclick="window.__quiz.clearBlank(${i})"` : "";
-          html += `<span class="${cls}" ${clickAttr}>${content}</span>`;
-          blankGlobalIndex++;
-        } else {
-          html += seg;
-        }
+          const click=!checked?`onclick="window.__quiz.clearBlank(${i})"`:'';
+          html+=`<span class="${cls}" ${click}>${content}</span>`;
+          gi++;
+        } else { html+=seg; }
       });
-      html += `</p>`;
-      return html;
-    }).join("");
-
-    let optionsHtml = options.map(opt => {
-      const used = usedOptions.has(opt);
-      const disabled = used || checked;
-      return `<button
-        class="option-btn"
+      return html+'</p>';
+    }).join('');
+    const optionsHtml=options.map(opt=>{
+      const isUsed=used.has(opt);
+      return `<button class="option-btn"
         onclick="window.__quiz.selectOption('${opt.replace(/'/g,"\\'")}')"
-        ${disabled ? 'disabled' : ''}
-        style="opacity:${used ? 0.35 : 1};"
-      >${opt}</button>`;
-    }).join("");
-
-    let footer = "";
+        ${isUsed||checked?'disabled':''}
+        style="opacity:${isUsed?0.35:1};">${opt}</button>`;
+    }).join('');
+    let footer='';
     if(checked){
-      const allCorrect = flatBlanks.every((b,i)=>filled[i]===b.answer);
-      if(allCorrect){
-        const isLastPage = pageIndex === pages.length - 1;
-        footer = `<div class="result-banner result-success">
-          <span>✓ 所有答案都正確！非常好！</span>
-          <button class="retry-btn" onclick="window.__quiz.nextPage()">${isLastPage ? '完成' : '下一頁'}</button>
-        </div>`;
-      } else {
-        footer = `<div class="result-banner result-danger">
-          <span>✗ 有答案不正確，請再試一次</span>
-          <button class="retry-btn" onclick="window.__quiz.retryPage()">重新作答</button>
-        </div>`;
-      }
+      const allOk=flat.every((b,i)=>filled[i]===b.answer);
+      const isLast=pageIndex===pages.length-1;
+      footer=allOk
+        ?`<div class="result-banner result-success"><span>✓ 所有答案都正確！非常好！</span><button class="retry-btn" onclick="window.__quiz.nextPage()">${isLast?'完成':'下一頁'}</button></div>`
+        :`<div class="result-banner result-danger"><span>✗ 有答案不正確，請再試一次</span><button class="retry-btn" onclick="window.__quiz.retryPage()">重新作答</button></div>`;
     } else {
-      footer = `<button class="check-btn" onclick="window.__quiz.checkAnswers()" ${!allFilled ? 'disabled' : ''}>檢查</button>`;
+      footer=`<button class="check-btn" onclick="window.__quiz.checkAnswers()" ${!allFilled?'disabled':''}>檢查</button>`;
     }
-
-    root.innerHTML = `
+    document.getElementById('quiz-root').innerHTML=`
       <h2 class="page-title">${page.title}</h2>
-      <p class="progress">第 ${pageIndex + 1} / ${pages.length} 頁</p>
+      <p class="progress">第 ${pageIndex+1} / ${pages.length} 頁</p>
       <p class="timer" id="quiz-timer">已花費時間：${formatTime(elapsedSeconds)}</p>
       <div>${groupsHtml}</div>
       <div class="options-row">${optionsHtml}</div>
-      <div class="footer-row">${footer}</div>
-    `;
+      <div class="footer-row">${footer}</div>`;
   }
-
-  window.__quiz = { selectOption, clearBlank, checkAnswers, retryPage, nextPage };
+  window.__quiz={selectOption,clearBlank,checkAnswers,retryPage,nextPage};
   initPage();
 })();
 </script>
-
-
-
 </body></html>
