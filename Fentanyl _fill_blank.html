@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-Hant"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>吩坦尼貼片用藥安全練習</title>
+<style>
+  body {
+    margin: 0;
+    background: #FAF8F4;
+    color: #1F3A33;
+    font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+    padding: 32px 20px;
+  }
+  .quiz-wrap { max-width: 720px; margin: 0 auto; }
+  .page-title {
+    font-size: 22px; font-weight: 700; margin: 0 0 20px;
+    color: #1F3A33; line-height: 1.6; text-align: center;
+  }
+  .progress {
+    font-size: 13px; color: #5C6B66; margin: 0 0 4px;
+    font-weight: 500; text-align: center;
+  }
+  .timer {
+    font-size: 13px; color: #5C6B66; margin: 0 0 16px;
+    font-weight: 500; text-align: center; letter-spacing: 0.5px;
+  }
+  .timer-final { font-size: 16px; font-weight: 700; color: #1F3A33; margin: 4px 0 0; }
+  .quiz-card {
+    background: #FFFFFF; border: 1px solid #E7E2D8;
+    border-radius: 16px; padding: 28px 28px 24px;
+  }
+  .sentence { font-size: 16px; line-height: 2.6; margin: 0 0 6px; color: #1F3A33; }
+  .blank {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 90px; height: 32px; padding: 0 12px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+    vertical-align: middle; margin: 0 4px; transition: background 0.15s ease;
+  }
+  .blank-empty  { border: 1.5px dashed #C9C2B4; background: #FAF8F4; color: #A8A096; }
+  .blank-filled { border: 1.5px solid #5C8AA6; background: #EAF1F5; color: #2D5670; }
+  .blank-correct{ border: 1.5px solid #5B8C6B; background: #EBF4EC; color: #3A6B47; }
+  .blank-wrong  { border: 1.5px solid #D97B4F; background: #FBEAE1; color: #B8542A; }
+  .options-row {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-top: 28px; padding-top: 24px; border-top: 1px solid #E7E2D8;
+  }
+  .option-btn {
+    font-family: inherit; border: 1px solid #E7E2D8; background: #FFFFFF;
+    color: #1F3A33; padding: 8px 16px; border-radius: 8px;
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.1s ease;
+  }
+  .option-btn:hover:not(:disabled) { border-color: #D97B4F; transform: translateY(-1px); }
+  .option-btn:disabled { cursor: default; }
+  .footer-row { margin-top: 24px; }
+  .check-btn {
+    font-family: inherit; display: block; margin-left: auto;
+    border: 1px solid #1F3A33; background: #1F3A33; color: #fff;
+    padding: 10px 28px; border-radius: 8px; font-size: 14px;
+    font-weight: 700; cursor: pointer; transition: background 0.15s ease;
+  }
+  .check-btn:hover:not(:disabled) { background: #D97B4F; border-color: #D97B4F; }
+  .check-btn:disabled { background: #C9C2B4; border-color: #C9C2B4; cursor: default; }
+  .result-banner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding: 14px 18px; border-radius: 10px; font-size: 14px; font-weight: 700;
+  }
+  .result-success { background: #EBF4EC; color: #3A6B47; }
+  .result-danger  { background: #FBEAE1; color: #B8542A; }
+  .retry-btn {
+    font-family: inherit; flex-shrink: 0; border: 1px solid #D97B4F;
+    background: #fff; color: #D97B4F; padding: 8px 18px;
+    border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .retry-btn:hover { background: #D97B4F; color: #fff; }
+  .finish-banner { text-align: center; padding: 40px 20px; }
+  .finish-banner .big { font-size: 20px; font-weight: 700; color: #1F3A33; margin-bottom: 8px; }
+  .finish-banner .small { font-size: 14px; color: #5C6B66; }
+  .back-link {
+    display: inline-block; margin-top: 24px; font-size: 14px;
+    font-weight: 700; color: #5C8AA6; text-decoration: none;
+    border-bottom: 1px solid #5C8AA6; padding-bottom: 2px;
+  }
+  .back-link:hover { color: #D97B4F; border-bottom-color: #D97B4F; }
+</style>
+</head>
+<body>
+<div class="quiz-wrap">
+  <div class="quiz-card">
+    <div id="quiz-root"><p class="progress">載入中...</p></div>
+  </div>
+</div>
+<script>
+(function(){
+  const pages = [
+    {
+      title: "吩坦尼貼片藥效與安全管理",
+      groups: [
+        {
+          segments: [
+            "吩坦尼貼片是一種含有",
+            "GAP",
+            "成分的緩釋貼片製劑，列為",
+            "GAP",
+            "管制藥品。這種貼片能提供",
+            "GAP",
+            "持續藥效，並以非侵入性方式給藥，提升病人的生活品質。主成分的止痛強度為嗎啡的80~100倍，安全有效範圍狹小，因此用藥時必須特別謹慎。貼片使用前，需以",
+            "GAP",
+            "將皮膚擦乾淨，避免使用肥皂搓洗，以免皮膚敏感。每片貼片用完後，需將膠面對折並放入原包裝袋，下次回診時繳回醫院。"
+          ],
+          answers: ["Fentanyl", "第二級", "72小時", "清水"]
+        }
+      ],
+      distractors: ["Morphine", "Ibuprofen", "12小時", "一週", "酒精", "乳液", "第一級", "第四級"]
+    },
+    {
+      title: "貼片適用對象與使用注意事項",
+      groups: [
+        {
+          segments: [
+            "吩坦尼貼片適用於需要類鴉片製劑控制的",
+            "GAP",
+            "或頑固性疼痛，尤其當口服止痛劑無法有效止痛時。貼片劑型會以恆定速率釋放藥物，進入皮膚後被吸收進入",
+            "GAP",
+            "。初次使用時，藥效在12至24小時內逐漸增加，之後維持相對恆定的濃度。貼片只能貼於",
+            "GAP",
+            "，不可使用剪斷或損壞的貼片。若貼片部位暴露於",
+            "GAP",
+            "，可能導致藥物吸收增加，造成過量。"
+          ],
+          answers: ["慢性", "血液循環", "完好的皮膚", "熱源"]
+        }
+      ],
+      distractors: ["急性", "胃液", "腸道", "破損的皮膚", "黏膜", "冷源", "水源"]
+    },
+    {
+      title: "貼片更換與皮膚照護",
+      groups: [
+        {
+          segments: [
+            "貼片應貼於上身軀幹、上臂或",
+            "GAP",
+            "等毛髮較少的部位，並確保貼黏部位完全",
+            "GAP",
+            "。毛髮過長者可",
+            "GAP",
+            "，但不可用剃刀刮除。更換貼片時，建議每次貼於不同的位置，減少皮膚的不適。舊片使用滿72小時後，需撕下並於",
+            "GAP",
+            "貼上新片。用過的貼片需膠面對折，放回包裝袋並連同使用記錄",
+            "GAP",
+            "。"
+          ],
+          answers: ["大腿", "乾燥", "用剪刀剪短", "不同部位", "繳回藥局"]
+        }
+      ],
+      distractors: ["小腿", "濕潤", "油膩", "用拔毛器除毛", "相同部位", "原位置", "丟棄垃圾桶"]
+    },
+    {
+      title: "貼片使用注意事項與副作用",
+      groups: [
+        {
+          segments: [
+            "貼片使用期間可以洗澡，但建議以",
+            "GAP",
+            "方式，避免泡熱水澡或將貼片直接接觸熱源。若發燒時，藥物吸收可能增加，須注意副作用的發生。止痛效果應在使用後24小時再評估，因為貼片為逐步釋放藥物，藥效會有",
+            "GAP",
+            "。"
+          ],
+          answers: ["淋浴", "延遲"]
+        },
+        {
+          segments: [
+            "吩坦尼貼片常見副作用包括便秘、呼吸減慢、噁心、嘔吐及",
+            "GAP",
+            "。若副作用嚴重或讓您困擾，應立即與醫療人員聯絡。若出現嚴重過敏反應、",
+            "GAP",
+            "、肌肉痙攣或持續胸痛，需馬上就診。貼片可能造成步態不穩，行走時要小心並避免開車或操作機械。藥品應儲存於未開封的原包裝內，並放置於兒童無法觸及之處。"
+          ],
+          answers: ["鎮靜", "無法呼吸"]
+        }
+      ],
+      distractors: ["泡澡", "溫泉", "即時", "提前", "興奮", "失眠", "呼吸順暢"]
+    }
+  ];
+
+  let pageIndex = 0, options = [], filled = {}, checked = false;
+  let elapsedSeconds = 0, timerInterval = null;
+
+  function shuffle(arr){
+    const a=arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+  function formatTime(s){
+    return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  }
+  function startTimer(){
+    if(timerInterval) return;
+    timerInterval=setInterval(()=>{
+      elapsedSeconds++;
+      const el=document.getElementById('quiz-timer');
+      if(el) el.textContent='已花費時間：'+formatTime(elapsedSeconds);
+    },1000);
+  }
+  function stopTimer(){
+    if(timerInterval){ clearInterval(timerInterval); timerInterval=null; }
+  }
+  function getFlatBlanks(page){
+    const flat=[];
+    page.groups.forEach(g=>g.answers.forEach(ans=>flat.push({answer:ans})));
+    return flat;
+  }
+  function initPage(){
+    const page=pages[pageIndex];
+    const flat=getFlatBlanks(page);
+    options=shuffle(flat.map(b=>b.answer).concat(page.distractors));
+    filled={}; checked=false;
+    render(); startTimer();
+  }
+  function selectOption(opt){
+    if(checked) return;
+    const flat=getFlatBlanks(pages[pageIndex]);
+    if(Object.values(filled).includes(opt)) return;
+    const idx=flat.findIndex((b,i)=>!filled[i]);
+    if(idx===-1) return;
+    filled[idx]=opt; render();
+  }
+  function clearBlank(idx){ if(checked) return; delete filled[idx]; render(); }
+  function checkAnswers(){ checked=true; render(); }
+  function retryPage(){ initPage(); }
+  function nextPage(){
+    if(pageIndex<pages.length-1){ pageIndex++; initPage(); }
+    else { renderFinish(); }
+  }
+  function renderFinish(){
+    stopTimer();
+    document.getElementById('quiz-root').innerHTML=`
+      <div class="finish-banner">
+        <div class="big">✓ 全部練習完成！</div>
+        <div class="small">您已完成 吩坦尼貼片用藥安全 相關練習。</div>
+        <div class="timer-final">總耗時：${formatTime(elapsedSeconds)}</div>
+        <a class="back-link" href="https://pha.lib.cmuh.org.tw/p/PHlearning">回藥劑部學習平台</a>
+      </div>`;
+  }
+  function render(){
+    const page=pages[pageIndex];
+    const flat=getFlatBlanks(page);
+    const allFilled=flat.every((b,i)=>filled[i]);
+    const used=new Set(Object.values(filled));
+    let gi=0;
+    const groupsHtml=page.groups.map(g=>{
+      let html='<p class="sentence">';
+      g.segments.forEach(seg=>{
+        if(seg==='GAP'){
+          const i=gi, info=flat[i], val=filled[i];
+          let cls='blank ', content='&nbsp;';
+          if(!val) cls+='blank-empty';
+          else if(!checked){ cls+='blank-filled'; content=val; }
+          else{
+            const ok=val===info.answer;
+            cls+=ok?'blank-correct':'blank-wrong';
+            content=val+(ok?' ✓':' ✗');
+          }
+          const click=!checked?`onclick="window.__quiz.clearBlank(${i})"`:'';
+          html+=`<span class="${cls}" ${click}>${content}</span>`;
+          gi++;
+        } else { html+=seg; }
+      });
+      return html+'</p>';
+    }).join('');
+    const optionsHtml=options.map(opt=>{
+      const isUsed=used.has(opt);
+      return `<button class="option-btn"
+        onclick="window.__quiz.selectOption('${opt.replace(/'/g,"\\'")}')"
+        ${isUsed||checked?'disabled':''}
+        style="opacity:${isUsed?0.35:1};">${opt}</button>`;
+    }).join('');
+    let footer='';
+    if(checked){
+      const allOk=flat.every((b,i)=>filled[i]===b.answer);
+      const isLast=pageIndex===pages.length-1;
+      footer=allOk
+        ?`<div class="result-banner result-success"><span>✓ 所有答案都正確！非常好！</span><button class="retry-btn" onclick="window.__quiz.nextPage()">${isLast?'完成':'下一頁'}</button></div>`
+        :`<div class="result-banner result-danger"><span>✗ 有答案不正確，請再試一次</span><button class="retry-btn" onclick="window.__quiz.retryPage()">重新作答</button></div>`;
+    } else {
+      footer=`<button class="check-btn" onclick="window.__quiz.checkAnswers()" ${!allFilled?'disabled':''}>檢查</button>`;
+    }
+    document.getElementById('quiz-root').innerHTML=`
+      <h2 class="page-title">${page.title}</h2>
+      <p class="progress">第 ${pageIndex+1} / ${pages.length} 頁</p>
+      <p class="timer" id="quiz-timer">已花費時間：${formatTime(elapsedSeconds)}</p>
+      <div>${groupsHtml}</div>
+      <div class="options-row">${optionsHtml}</div>
+      <div class="footer-row">${footer}</div>`;
+  }
+  window.__quiz={selectOption,clearBlank,checkAnswers,retryPage,nextPage};
+  initPage();
+})();
+</script>
+</body></html>
