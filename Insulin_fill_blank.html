@@ -92,6 +92,13 @@
     color: #2D5670;
   }
 
+  .blank-active {
+    border: 1.5px solid #D97B4F !important;
+    background: #FCEFE6 !important;
+    color: #B8542A !important;
+    box-shadow: 0 0 0 3px rgba(217,123,79,0.18);
+  }
+
   .blank-correct {
     border: 1.5px solid #5B8C6B;
     background: #EBF4EC;
@@ -286,15 +293,13 @@
           segments: [
             "注射部位以腹部",
             "GAP",
-            "、",
-            "GAP",
-            "、大腿上半外側及",
+            "、上臂外側、大腿上半外側及",
             "GAP",
             "為主。注射技巧方面，過瘦病人或兒童需捏起皮膚，僅能用大姆指和食指或中指，不要捏起",
             "GAP",
             "。注射時針頭應避免壓陷皮膚，以免深及肌肉層。要定期檢查注射部位是否有瘀青、發紅或感染。若發現脂肪萎縮或腫塊，應立即告知醫師。"
           ],
-          answers: ["避開肚臍周圍", "上臂外側", "臀部外上1/4", "肌肉"]
+          answers: ["避開肚臍周圍", "臀部外上1/4", "肌肉"]
         }
       ],
       distractors: ["肚臍中央", "臀部內下1/2", "興奮", "腹瀉", "無尿", "毛髮", "針頭", "紗布", "平行", "10°"]
@@ -349,6 +354,7 @@
   let options = [];
   let filled = {};
   let checked = false;
+  let activeIdx = null;
   let elapsedSeconds = 0;
   let timerInterval = null;
 
@@ -389,6 +395,7 @@
     options = shuffle(flatBlanks.map(b=>b.answer).concat(page.distractors));
     filled = {};
     checked = false;
+    activeIdx = null;
     render();
     startTimer();
   }
@@ -408,15 +415,16 @@
     const page = pages[pageIndex];
     const flatBlanks = getFlatBlanks(page);
     if(Object.values(filled).includes(opt)) return;
-    const emptyIdx = flatBlanks.findIndex((b, i) => !filled[i]);
-    if(emptyIdx === -1) return;
-    filled[emptyIdx] = opt;
+    const idx = (activeIdx !== null) ? activeIdx : flatBlanks.findIndex((b, i) => !filled[i]);
+    if(idx === -1 || idx === null) return;
+    filled[idx] = opt;
+    activeIdx = null;
     render();
   }
 
-  function clearBlank(idx){
+  function toggleActive(idx){
     if(checked) return;
-    delete filled[idx];
+    activeIdx = (activeIdx === idx) ? null : idx;
     render();
   }
 
@@ -470,18 +478,17 @@
           let cls = "blank ";
           let content = "&nbsp;";
 
-          if(!val){
-            cls += "blank-empty";
-          } else if(!checked){
-            cls += "blank-filled";
-            content = val;
+          if(!checked){
+            cls += val ? "blank-filled" : "blank-empty";
+            if(val) content = val;
+            if(i === activeIdx) cls += " blank-active";
           } else {
             const isCorrect = val === blankInfo.answer;
             cls += isCorrect ? "blank-correct" : "blank-wrong";
-            content = val + (isCorrect ? " ✓" : " ✗");
+            content = (val || "&nbsp;") + (isCorrect ? " ✓" : " ✗");
           }
 
-          const clickAttr = !checked ? `onclick="window.__quiz.clearBlank(${i})"` : "";
+          const clickAttr = !checked ? `onclick="window.__quiz.toggleActive(${i})"` : "";
           html += `<span class="${cls}" ${clickAttr}>${content}</span>`;
           blankGlobalIndex++;
         } else {
@@ -532,7 +539,7 @@
     `;
   }
 
-  window.__quiz = { selectOption, clearBlank, checkAnswers, retryPage, nextPage };
+  window.__quiz = { selectOption, toggleActive, checkAnswers, retryPage, nextPage };
   initPage();
 })();
 </script>
