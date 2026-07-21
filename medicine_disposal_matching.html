@@ -265,7 +265,11 @@
     if(lock) return;
     const card = cards.find(c => c.id === id);
     if(!card || card.matched) return;
-    if(selected.includes(id)) return;
+    if(selected.includes(id)){
+      selected = selected.filter(sid => sid !== id);
+      render();
+      return;
+    }
     if(selected.length >= 2) return;
 
     selected.push(id);
