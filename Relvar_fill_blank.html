@@ -92,6 +92,13 @@
     color: #2D5670;
   }
 
+  .blank-active {
+    border: 1.5px solid #D97B4F !important;
+    background: #FCEFE6 !important;
+    color: #B8542A !important;
+    box-shadow: 0 0 0 3px rgba(217,123,79,0.18);
+  }
+
   .blank-correct {
     border: 1.5px solid #5B8C6B;
     background: #EBF4EC;
@@ -335,6 +342,7 @@
   let options = [];
   let filled = {};
   let checked = false;
+  let activeIdx = null;
   let elapsedSeconds = 0;
   let timerInterval = null;
 
@@ -375,6 +383,7 @@
     options = shuffle(flatBlanks.map(b=>b.answer).concat(page.distractors));
     filled = {};
     checked = false;
+    activeIdx = null;
     render();
     startTimer();
   }
@@ -394,15 +403,16 @@
     const page = pages[pageIndex];
     const flatBlanks = getFlatBlanks(page);
     if(Object.values(filled).includes(opt)) return;
-    const emptyIdx = flatBlanks.findIndex((b, i) => !filled[i]);
-    if(emptyIdx === -1) return;
-    filled[emptyIdx] = opt;
+    const idx = (activeIdx !== null) ? activeIdx : flatBlanks.findIndex((b, i) => !filled[i]);
+    if(idx === -1 || idx === null) return;
+    filled[idx] = opt;
+    activeIdx = null;
     render();
   }
 
-  function clearBlank(idx){
+  function toggleActive(idx){
     if(checked) return;
-    delete filled[idx];
+    activeIdx = (activeIdx === idx) ? null : idx;
     render();
   }
 
@@ -456,18 +466,17 @@
           let cls = "blank ";
           let content = "&nbsp;";
 
-          if(!val){
-            cls += "blank-empty";
-          } else if(!checked){
-            cls += "blank-filled";
-            content = val;
+          if(!checked){
+            cls += val ? "blank-filled" : "blank-empty";
+            if(val) content = val;
+            if(i === activeIdx) cls += " blank-active";
           } else {
             const isCorrect = val === blankInfo.answer;
             cls += isCorrect ? "blank-correct" : "blank-wrong";
-            content = val + (isCorrect ? " ✓" : " ✗");
+            content = (val || "&nbsp;") + (isCorrect ? " ✓" : " ✗");
           }
 
-          const clickAttr = !checked ? `onclick="window.__quiz.clearBlank(${i})"` : "";
+          const clickAttr = !checked ? `onclick="window.__quiz.toggleActive(${i})"` : "";
           html += `<span class="${cls}" ${clickAttr}>${content}</span>`;
           blankGlobalIndex++;
         } else {
@@ -518,7 +527,7 @@
     `;
   }
 
-  window.__quiz = { selectOption, clearBlank, checkAnswers, retryPage, nextPage };
+  window.__quiz = { selectOption, toggleActive, checkAnswers, retryPage, nextPage };
   initPage();
 })();
 </script>
