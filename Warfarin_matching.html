@@ -203,7 +203,13 @@
     var card = null;
     for(var i=0;i<cards.length;i++){ if(cards[i].id===id){card=cards[i];break;} }
     if(!card||card.matched) return;
-    if(selected.indexOf(id)!==-1||selected.length>=2) return;
+    var idx = selected.indexOf(id);
+    if(idx!==-1){
+      selected.splice(idx,1);
+      render();
+      return;
+    }
+    if(selected.length>=2) return;
     selected.push(id);
     render();
     if(selected.length===2){
