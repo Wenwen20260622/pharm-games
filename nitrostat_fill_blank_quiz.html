@@ -37,6 +37,10 @@
   }
   .blank-empty  { border: 1.5px dashed #C9C2B4; background: #FAF8F4; color: #A8A096; }
   .blank-filled { border: 1.5px solid #5C8AA6; background: #EAF1F5; color: #2D5670; }
+  .blank-active {
+    border: 1.5px solid #D97B4F !important; background: #FCEFE6 !important;
+    color: #B8542A !important; box-shadow: 0 0 0 3px rgba(217,123,79,0.18);
+  }
   .blank-correct{ border: 1.5px solid #5B8C6B; background: #EBF4EC; color: #3A6B47; }
   .blank-wrong  { border: 1.5px solid #D97B4F; background: #FBEAE1; color: #B8542A; }
   .options-row {
@@ -123,7 +127,7 @@
     }
   ];
 
-  let pageIndex = 0, options = [], filled = {}, checked = false;
+  let pageIndex = 0, options = [], filled = {}, checked = false, activeIdx = null;
   let elapsedSeconds = 0, timerInterval = null;
 
   function shuffle(arr){
@@ -157,18 +161,24 @@
     const page=pages[pageIndex];
     const flat=getFlatBlanks(page);
     options=shuffle(flat.map(b=>b.answer).concat(page.distractors));
-    filled={}; checked=false;
+    filled={}; checked=false; activeIdx=null;
     render(); startTimer();
   }
   function selectOption(opt){
     if(checked) return;
     const flat=getFlatBlanks(pages[pageIndex]);
     if(Object.values(filled).includes(opt)) return;
-    const idx=flat.findIndex((b,i)=>!filled[i]);
-    if(idx===-1) return;
-    filled[idx]=opt; render();
+    const idx=(activeIdx!==null)?activeIdx:flat.findIndex((b,i)=>!filled[i]);
+    if(idx===-1 || idx===null) return;
+    filled[idx]=opt;
+    activeIdx=null;
+    render();
   }
-  function clearBlank(idx){ if(checked) return; delete filled[idx]; render(); }
+  function toggleActive(idx){
+    if(checked) return;
+    activeIdx=(activeIdx===idx)?null:idx;
+    render();
+  }
   function checkAnswers(){ checked=true; render(); }
   function retryPage(){ initPage(); }
   function nextPage(){
@@ -197,14 +207,16 @@
         if(seg==='GAP'){
           const i=gi, info=flat[i], val=filled[i];
           let cls='blank ', content='&nbsp;';
-          if(!val) cls+='blank-empty';
-          else if(!checked){ cls+='blank-filled'; content=val; }
-          else{
+          if(!checked){
+            cls += val ? 'blank-filled' : 'blank-empty';
+            if(val) content=val;
+            if(i===activeIdx) cls += ' blank-active';
+          } else {
             const ok=val===info.answer;
             cls+=ok?'blank-correct':'blank-wrong';
-            content=val+(ok?' ✓':' ✗');
+            content=(val||'&nbsp;')+(ok?' ✓':' ✗');
           }
-          const click=!checked?`onclick="window.__quiz.clearBlank(${i})"`:'';
+          const click=!checked?`onclick="window.__quiz.toggleActive(${i})"`:'';
           html+=`<span class="${cls}" ${click}>${content}</span>`;
           gi++;
         } else { html+=seg; }
@@ -236,7 +248,7 @@
       <div class="options-row">${optionsHtml}</div>
       <div class="footer-row">${footer}</div>`;
   }
-  window.__quiz={selectOption,clearBlank,checkAnswers,retryPage,nextPage};
+  window.__quiz={selectOption,toggleActive,checkAnswers,retryPage,nextPage};
   initPage();
 })();
 </script>
